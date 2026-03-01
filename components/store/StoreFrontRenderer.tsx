@@ -18,7 +18,6 @@ import {
 } from './skeletons';
 import type { Product, WebsiteConfig } from '../../types';
 import { noCacheFetchOptions } from '../../utils/fetchHelpers';
-import { onDataRefresh } from '../../services/DataService';
 
 
 
@@ -88,9 +87,16 @@ interface StoreFrontRendererProps {
   onBuyNow?: (product: Product) => void;
   onQuickView?: (product: Product) => void;
   onAddToCart?: (product: Product, quantity: number, variant: any) => void;
+  // wishlist state/handler
+  wishlist?: number[];
+  onToggleWishlist?: (id: number) => void;
   onCategoryClick?: (categorySlug: string) => void;
   onBrandClick?: (brandSlug: string) => void;
   onOpenChat?: () => void;
+  // Optional: layout data passed from parent to avoid duplicate fetches
+  layoutData?: StoreLayoutData | null;
+  storeStudioEnabled?: boolean;
+  productDisplayOrder?: number[];
 }
 
 // Helper to compute flash sales countdown
@@ -150,15 +156,33 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
   onBuyNow,
   onQuickView,
   onAddToCart,
+  wishlist,
+  onToggleWishlist,
   onCategoryClick,
   onBrandClick,
   onOpenChat,
+  layoutData,
+  storeStudioEnabled: propStoreStudioEnabled,
+  productDisplayOrder: propProductDisplayOrder,
 }) => {
-  const [layout, setLayout] = useState<StoreLayoutData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [layout, setLayout] = useState<StoreLayoutData | null>(layoutData || null);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [storeStudioEnabled, setStoreStudioEnabled] = useState(false);
-  const [productDisplayOrder, setProductDisplayOrder] = useState<number[]>([]);
+  const [storeStudioEnabled, setStoreStudioEnabled] = useState(propStoreStudioEnabled ?? false);
+  const [productDisplayOrder, setProductDisplayOrder] = useState<number[]>(propProductDisplayOrder ?? []);
+
+  // Update state when props change
+  useEffect(() => {
+    if (layoutData !== undefined) setLayout(layoutData);
+  }, [layoutData]);
+
+  useEffect(() => {
+    if (propStoreStudioEnabled !== undefined) setStoreStudioEnabled(propStoreStudioEnabled);
+  }, [propStoreStudioEnabled]);
+
+  useEffect(() => {
+    if (propProductDisplayOrder !== undefined) setProductDisplayOrder(propProductDisplayOrder);
+  }, [propProductDisplayOrder]);
 
   const flashSaleCountdown = useFlashSaleCountdown();
 
@@ -235,77 +259,9 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
     };
   }, [orderedProducts]);
 
-  // Shared function to fetch and update store studio config and layout
-  const fetchAndUpdateConfigAndLayout = useCallback(async () => {
-    if (!tenantId) return;
-
-    try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-      // Fetch both store studio config and layout in parallel
-      const [configResponse, layoutResponse] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_studio_config`, noCacheFetchOptions),
-        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_layout`, noCacheFetchOptions)
-      ]);
-
-      // Check if store studio is enabled
-      if (configResponse.ok) {
-        const configResult = await configResponse.json();
-        const isEnabled = configResult.data?.enabled || false;
-        const displayOrder = configResult.data?.productDisplayOrder || [];
-        
-        setStoreStudioEnabled(isEnabled);
-        setProductDisplayOrder(displayOrder);
-        
-        // Only use custom layout if store studio is enabled
-        if (isEnabled && layoutResponse.ok) {
-          const layoutResult = await layoutResponse.json();
-          if (layoutResult.data?.sections?.length > 0) {
-            setLayout(layoutResult.data);
-          } else {
-            setLayout(null);
-          }
-        } else {
-          setLayout(null);
-        }
-      }
-    } catch (e) {
-      console.warn('[StoreFrontRenderer] Error fetching config/layout:', e);
-      setError('Failed to load configuration');
-    }
-  }, [tenantId]);
-
-  // Fetch store studio config and layout from backend on mount
-  useEffect(() => {
-    const initLayoutAndConfig = async () => {
-      if (!tenantId) {
-        setIsLoading(false);
-        return;
-      }
-
-      await fetchAndUpdateConfigAndLayout();
-      setIsLoading(false);
-    };
-
-    initLayoutAndConfig();
-  }, [tenantId, fetchAndUpdateConfigAndLayout]);
-
-  // Listen for real-time updates to store_studio_config and store_layout
-  useEffect(() => {
-    if (!tenantId) return;
-
-    const unsubscribe = onDataRefresh((key, updatedTenantId, fromSocket) => {
-      // Only respond to updates for this tenant
-      if (updatedTenantId !== tenantId) return;
-      
-      // Refetch config and layout when store studio settings change
-      if (key === 'store_studio_config' || key === 'store_layout') {
-        console.log('[StoreFrontRenderer] Detected update to', key, '- refetching...');
-        fetchAndUpdateConfigAndLayout();
-      }
-    });
-
-    return () => unsubscribe();
-  }, [tenantId, fetchAndUpdateConfigAndLayout]);
+  // StoreFrontRenderer should NOT fetch these endpoints independently
+  // Parent (StoreHome) is responsible for fetching and passing data as props
+  // This prevents duplicate API calls and infinite loops
 
   // Get products filtered by tag
   const getTagProducts = useCallback((tagName: string) => {
@@ -373,8 +329,8 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
                 onProductClick={onProductClick}
                 onBuyNow={handleBuyNowFallback}
                 onQuickView={handleQuickViewFallback}
-                onAddToCart={handleAddToCartFallback}
-                productCardStyle={websiteConfig?.productCardStyle}
+                onAddToCart={handleAddToCartFallback}                wishlist={wishlist}
+                onToggleWishlist={onToggleWishlist}                productCardStyle={websiteConfig?.productCardStyle}
               />
             </Suspense>
           </section>
@@ -401,6 +357,8 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
                   onBuyNow={handleBuyNowFallback}
                   onQuickView={handleQuickViewFallback}
                   onAddToCart={handleAddToCartFallback}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
                   productCardStyle={websiteConfig?.productCardStyle}
                   productSectionStyle={websiteConfig?.productSectionStyle}
                   showSoldCount={websiteConfig?.showProductSoldCount}
@@ -539,6 +497,8 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
                     onBuyNow={handleBuyNowFallback}
                     onQuickView={handleQuickViewFallback}
                     onAddToCart={handleAddToCartFallback}
+                    wishlist={wishlist}
+                    onToggleWishlist={onToggleWishlist}
                     productCardStyle={websiteConfig?.productCardStyle}
                     productSectionStyle={websiteConfig?.productSectionStyle}
                     showSoldCount={websiteConfig?.showProductSoldCount}

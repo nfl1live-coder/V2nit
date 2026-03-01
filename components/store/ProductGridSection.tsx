@@ -15,6 +15,9 @@ interface Props {
   onBuyNow?: (p: Product) => void; 
   onQuickView?: (p: Product) => void; 
   onAddToCart?: (p: Product) => void; 
+  // wishlist state/handler passed down to cards
+  wishlist?: number[];
+  onToggleWishlist?: (id: number) => void;
   productCardStyle?: string; 
   productSectionStyle?: string;
   keyPrefix: string; 
@@ -38,7 +41,7 @@ const icons = {
 };
 
 // Style 1: Classic Clean Grid
-const ProductSectionStyle1 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle1 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="pt-1 pb-2">
       <div className="bg-white/80 backdrop-blur-lg border border-gray-100 rounded-lg p-2 md:p-2.5 mb-2 shadow-sm flex items-center gap-2">
@@ -55,7 +58,7 @@ const ProductSectionStyle1 = memo(({ title, titleExtra, products, accentColor = 
 ProductSectionStyle1.displayName = 'ProductSectionStyle1';
 
 // Style 2: Bordered Cards with Icon Header
-const ProductSectionStyle2 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle2 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="pt-1 pb-2">
       <div className="flex items-center gap-3 mb-4 px-1">
@@ -79,7 +82,7 @@ const ProductSectionStyle2 = memo(({ title, titleExtra, products, accentColor = 
 ProductSectionStyle2.displayName = 'ProductSectionStyle2';
 
 // Style 3: Gradient Header with Shadow Cards
-const ProductSectionStyle3 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle3 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="pt-1 pb-2">
       <div className="bg-gradient-theme-br rounded-t-2xl p-4 sm:p-5">
@@ -103,7 +106,7 @@ const ProductSectionStyle3 = memo(({ title, titleExtra, products, accentColor = 
 ProductSectionStyle3.displayName = 'ProductSectionStyle3';
 
 // Style 4: Minimal with Underline
-const ProductSectionStyle4 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle4 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="pt-1 pb-2">
       <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-gray-100">
@@ -123,7 +126,7 @@ const ProductSectionStyle4 = memo(({ title, titleExtra, products, accentColor = 
 ProductSectionStyle4.displayName = 'ProductSectionStyle4';
 
 // Style 5: Card Container with Badge
-const ProductSectionStyle5 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
+const ProductSectionStyle5 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
     <section className="pt-1 pb-2">
       <div className="relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -152,7 +155,7 @@ const ProductSectionStyle5 = memo(({ title, titleExtra, products, accentColor = 
 ProductSectionStyle5.displayName = 'ProductSectionStyle5';
 
 // Main Component
-export const ProductGridSection = ({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, productSectionStyle = '1', keyPrefix, maxProducts = 10, reverseOrder = false, showSoldCount }: Props) => {
+export const ProductGridSection = ({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, productSectionStyle = '1', keyPrefix, maxProducts = 10, reverseOrder = false, showSoldCount }: Props) => {
   const display = reverseOrder ? products.slice().reverse().slice(0, maxProducts) : products.slice(0, maxProducts);
   
   const initCount = useCallback(() => {
@@ -171,7 +174,7 @@ export const ProductGridSection = ({ title, titleExtra, products, accentColor = 
   }, [display.length, visible]);
 
   const visibleProducts = display.slice(0, visible);
-  const commonProps = { title, titleExtra, products: visibleProducts, accentColor, onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, keyPrefix, showSoldCount };
+  const commonProps = { title, titleExtra, products: visibleProducts, accentColor, onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount };
 
   switch (productSectionStyle) {
     case '2': return <ProductSectionStyle2 {...commonProps} />;

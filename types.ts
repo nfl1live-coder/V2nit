@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 export type TenantPlan = 'starter' | 'growth' | 'enterprise';
 export type TenantStatus = 'active' | 'trialing' | 'suspended' | 'inactive' | 'pending';
@@ -117,6 +117,8 @@ interface Variant {
 }
 
 export interface Product {
+  sold: ReactNode;
+  // sold: import("react/jsx-runtime").JSX.Element;
   title: string;
   salePrice: any;
   totalSold?: number;

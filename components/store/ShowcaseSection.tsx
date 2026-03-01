@@ -10,13 +10,16 @@ interface Props {
   onBuyNow: (p: Product) => void;
   onQuickView: (p: Product) => void;
   onAddToCart: (p: Product) => void;
+  // wishlist support
+  wishlist?: number[];
+  onToggleWishlist?: (id: number) => void;
   productCardStyle?: string;
   style?: string;
   sectionRef?: React.RefObject<HTMLElement>;
 }
 
 // Style 1: Classic Carousel with Large Hero Cards
-const ShowcaseStyle1 = memo(({ products, onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle }: Omit<Props, 'style' | 'sectionRef'>) => {
+const ShowcaseStyle1 = memo(({ products, onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle }: Omit<Props, 'style' | 'sectionRef'>) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -73,7 +76,7 @@ const ShowcaseStyle1 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
 ShowcaseStyle1.displayName = 'ShowcaseStyle1';
 
 // Style 2: Hero Banner + Side Products Grid
-const ShowcaseStyle2 = memo(({ products, onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle }: Omit<Props, 'style' | 'sectionRef'>) => {
+const ShowcaseStyle2 = memo(({ products, onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle }: Omit<Props, 'style' | 'sectionRef'>) => {
   const display = useMemo(() => products.slice(0, 5), [products]);
   const [hero, ...sides] = display;
 
@@ -105,7 +108,7 @@ const ShowcaseStyle2 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
         <div className="grid grid-cols-2 gap-3">
           {sides.map(p => (
             <div key={p.id} className="h-full">
-              <ProductCard product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} />
+              <ProductCard product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
             </div>
           ))}
         </div>
@@ -116,7 +119,7 @@ const ShowcaseStyle2 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
 ShowcaseStyle2.displayName = 'ShowcaseStyle2';
 
 // Style 3: Masonry Grid with Featured Badges
-const ShowcaseStyle3 = memo(({ products, onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle }: Omit<Props, 'style' | 'sectionRef'>) => {
+const ShowcaseStyle3 = memo(({ products, onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle }: Omit<Props, 'style' | 'sectionRef'>) => {
   const display = useMemo(() => products.slice(0, 6), [products]);
 
   if (!display.length) return null;
@@ -138,7 +141,7 @@ const ShowcaseStyle3 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
                   <Crown size={12} /> Most Popular
                 </div>
               )}
-              <ProductCard product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} />
+              <ProductCard product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />
             </div>
           </div>
         ))}

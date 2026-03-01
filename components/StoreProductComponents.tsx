@@ -11,19 +11,24 @@ interface ProductCardProps {
   onQuickView?: (product: Product) => void;
   onBuyNow?: (product: Product) => void;
   onAddToCart?: (product: Product) => void;
+  wishlist?: number[];
+  onToggleWishlist?: (productId: number) => void;
+  showSoldCount?: boolean; // Add this line!
 }
 
 const getImage = (p: Product) => normalizeImageUrl(p.galleryImages?.[0] || p.image);
 
 // Style 1: Default - Clean modern card with gradient top bar
-const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart }) => {
+const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist }) => {
+  const isWishlisted = wishlist.includes(product.id);
   const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); onBuyNow ? onBuyNow(product) : onClick(product); };
   const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart?.(product); };
+  const handleWishlist = (e: React.MouseEvent) => { e.stopPropagation(); onToggleWishlist?.(product.id); };
 
   return (
     <div className="bg-white rounded-xl overflow-hidden flex flex-col relative shadow-sm hover:shadow-lg transition-shadow duration-300" style={{ contain: 'layout' }}>
       <div className="absolute to p-0 left-0 right-0 h-0.5 z-10" style={{ background: 'linear-gradient(to right, #8b5cf6, #ec4899)' }} />
-      <button className="absolute to p-2 left-2 z-10 text-pink-400 hover:text-pink-500 transition-colors w-4 h-4" onClick={(e) => e.stopPropagation()}><Heart size={16} /></button>
+      <button className="absolute to p-2 left-2 z-10 text-pink-400 hover:text-pink-500 transition-colors w-4 h-4" onClick={handleWishlist}><Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} /></button>
       <div className="absolute to p-2 right-2 z-10 min-w-[32px] h-[18px]">
         {product.discount && <span className="text-white text-[8px] font-semibold px-1.5 py-0.5 rounded" style={{ background: 'linear-gradient(to right, #8b5cf6, #a855f7)' }}>SALE</span>}
       </div>
@@ -53,18 +58,20 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
 };
 
 // Style 2: Minimal - Clean with hover overlay actions
-const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart }) => {
+const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const isWishlisted = wishlist.includes(product.id);
   const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); onBuyNow ? onBuyNow(product) : onClick(product); };
   const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart?.(product); };
+  const handleWishlist = (e: React.MouseEvent) => { e.stopPropagation(); onToggleWishlist?.(product.id); };
   const discountPercent = product.originalPrice && product.price ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : null;
 
   return (
     <div className="group bg-white rounded-lg overflow-hidden flex flex-col relative border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300" style={{ contain: 'layout' }} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-      <div className="absolute to p-2 left-2 z-10 flex flex-col gap-1">
+      {/* <div className="absolute to p-2 left-2 z-10 flex flex-col gap-1">
         {(product.discount || discountPercent) && <span className="bg-gradient-to-r from-rose-500 to-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">{product.discount || `-${discountPercent}%`}</span>}
-      </div>
-      <button onClick={(e) => e.stopPropagation()} className="absolute to p-2 right-2 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-sm flex items-center justify-center hover:scale-110 transition-all"><Heart size={16} className="text-gray-400 group-hover:text-rose-500" /></button>
+      </div> */}
+      {/* <button onClick={handleWishlist} className="absolute to p-2 right-2 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-sm flex items-center justify-center hover:scale-110 transition-all"><Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} className={isWishlisted ? 'text-rose-500' : 'text-gray-400 group-hover:text-rose-500'} /></button> */}
       <div className="relative cursor-pointer bg-gray-50 overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-110 transition-transform duration-300" width={300} height={300} />
         <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-3 flex justify-center gap-3 transition-all duration-300 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
@@ -86,15 +93,17 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
 };
 
 // Style 3: Elegant - Rounded corners with soft shadows and elegant typography
-const ProductCardStyle3: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart }) => {
+const ProductCardStyle3: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist }) => {
+  const isWishlisted = wishlist.includes(product.id);
   const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); onBuyNow ? onBuyNow(product) : onClick(product); };
   const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart?.(product); };
+  const handleWishlist = (e: React.MouseEvent) => { e.stopPropagation(); onToggleWishlist?.(product.id); };
   const discountPercent = product.originalPrice && product.price ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : null;
 
   return (
     <div className="group bg-gradient-to-b from-white to-gray-50/50 rounded-2xl overflow-hidden flex flex-col relative shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100" style={{ contain: 'layout' }}>
       {(product.discount || discountPercent) && <div className="absolute to p-3 left-3 z-10"><span className="bg-gradient-to-br from-amber-400 to-orange-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg">{product.discount || `-${discountPercent}%`}</span></div>}
-      <button onClick={(e) => e.stopPropagation()} className="absolute to p-3 right-3 z-10 w-9 h-9 bg-white/80 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center hover:scale-110 hover:bg-rose-50 transition-all"><Heart size={16} className="text-gray-400 group-hover:text-rose-500 transition-colors" /></button>
+      <button onClick={handleWishlist} className="absolute to p-3 right-3 z-10 w-9 h-9 bg-white/80 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center hover:scale-110 hover:bg-rose-50 transition-all"><Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} className={isWishlisted ? 'text-rose-500' : 'text-gray-400 group-hover:text-rose-500 transition-colors'} /></button>
       <div className="relative cursor-pointer bg-white m-2 rounded-xl overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" width={300} height={300} />
       </div>
@@ -118,15 +127,17 @@ const ProductCardStyle3: React.FC<ProductCardProps> = ({ product, onClick, onBuy
 };
 
 // Style 4: Bold - Dark theme with vibrant accents
-const ProductCardStyle4: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart }) => {
+const ProductCardStyle4: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist }) => {
+  const isWishlisted = wishlist.includes(product.id);
   const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); onBuyNow ? onBuyNow(product) : onClick(product); };
   const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart?.(product); };
+  const handleWishlist = (e: React.MouseEvent) => { e.stopPropagation(); onToggleWishlist?.(product.id); };
   const discountPercent = product.originalPrice && product.price ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : null;
 
   return (
     <div className="group bg-gray-900 rounded-xl overflow-hidden flex flex-col relative shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-800" style={{ contain: 'layout' }}>
       {(product.discount || discountPercent) && <div className="absolute to p-3 left-3 z-10"><span className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-md flex items-center gap-1"><Zap size={10} />{product.discount || `-${discountPercent}%`}</span></div>}
-      <button onClick={(e) => e.stopPropagation()} className="absolute to p-3 right-3 z-10 w-8 h-8 bg-gray-800/80 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-rose-500 transition-all"><Heart size={14} className="text-gray-400 group-hover:text-white" /></button>
+      <button onClick={handleWishlist} className="absolute to p-3 right-3 z-10 w-8 h-8 bg-gray-800/80 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-rose-500 transition-all"><Heart size={14} fill={isWishlisted ? 'currentColor' : 'none'} className={isWishlisted ? 'text-white' : 'text-gray-400 group-hover:text-white'} /></button>
       <div className="relative cursor-pointer bg-gray-800 m-2 rounded-lg overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-110 transition-transform duration-300" width={300} height={300} />
       </div>
@@ -150,16 +161,18 @@ const ProductCardStyle4: React.FC<ProductCardProps> = ({ product, onClick, onBuy
 };
 
 // Style 5: Compact - Space-efficient with horizontal layout on larger screens
-const ProductCardStyle5: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart }) => {
+const ProductCardStyle5: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist }) => {
+  const isWishlisted = wishlist.includes(product.id);
   const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); onBuyNow ? onBuyNow(product) : onClick(product); };
   const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart?.(product); };
+  const handleWishlist = (e: React.MouseEvent) => { e.stopPropagation(); onToggleWishlist?.(product.id); };
   const discountPercent = product.originalPrice && product.price ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : null;
 
   return (
     <div className="group bg-white rounded-lg overflow-hidden flex flex-col relative border border-gray-200 hover:border-theme-primary/30 hover:shadow-lg transition-all duration-300" style={{ contain: 'layout' }}>
       <div className="absolute to p-0 left-0 w-full h-1 bg-gradient-theme-r opacity-0 group-hover:opacity-100 transition-opacity" />
       {(product.discount || discountPercent) && <div className="absolute to p-2 left-2 z-10"><span className="bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">{product.discount || `-${discountPercent}%`}</span></div>}
-      <button onClick={(e) => e.stopPropagation()} className="absolute to p-2 right-2 z-10 w-7 h-7 bg-white shadow-md rounded-full flex items-center justify-center hover:scale-110 transition-all"><Heart size={14} className="text-gray-400 group-hover:text-rose-500" /></button>
+      <button onClick={handleWishlist} className="absolute to p-2 right-2 z-10 w-7 h-7 bg-white shadow-md rounded-full flex items-center justify-center hover:scale-110 transition-all"><Heart size={14} fill={isWishlisted ? 'currentColor' : 'none'} className={isWishlisted ? 'text-rose-500' : 'text-gray-400 group-hover:text-rose-500'} /></button>
       <div className="relative cursor-pointer bg-gradient-to-br from-gray-50 to-white overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" width={300} height={300} />
         <div className="absolute inset-0 bg-theme-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />

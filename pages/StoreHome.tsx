@@ -2,7 +2,6 @@
 import React, { lazy, Suspense, useCallback, useState, useEffect } from 'react';
 import type { Product, User, WebsiteConfig, Order, ProductVariantSelection } from '../types';
 import { noCacheFetchOptions } from '../utils/fetchHelpers';
-import { useDataRefreshDebounced } from '../hooks/useDataRefresh';
 
 // Import storefront improvements CSS
 import '../styles/storefront-improvements.css';
@@ -164,6 +163,9 @@ const StoreHome: React.FC<StoreHomeProps> = ({
   // === CUSTOM LAYOUT STATE ===
   const [useCustomLayout, setUseCustomLayout] = useState(false);
   const [customLayoutLoading, setCustomLayoutLoading] = useState(true);
+  const [customLayoutData, setCustomLayoutData] = useState(null);
+  const [storeStudioEnabled, setStoreStudioEnabled] = useState(false);
+  const [productDisplayOrder, setProductDisplayOrder] = useState<number[]>([]);
 
   // Shared function to check and update custom layout state
   const checkAndUpdateCustomLayout = useCallback(async (logPrefix = '') => {
@@ -186,11 +188,18 @@ const StoreHome: React.FC<StoreHomeProps> = ({
         
         const isStoreStudioEnabled = configResult.data?.enabled || false;
         const hasCustomLayout = layoutResult.data?.sections?.length > 0;
+        const displayOrder = configResult.data?.productDisplayOrder || [];
+        
+        // Store the config and layout data to pass to StoreFrontRenderer
+        setStoreStudioEnabled(isStoreStudioEnabled);
+        setProductDisplayOrder(displayOrder);
         
         if (isStoreStudioEnabled && hasCustomLayout) {
+          setCustomLayoutData(layoutResult.data);
           setUseCustomLayout(true);
           console.log(`[StoreHome]${logPrefix} Using custom layout from Store Studio`);
         } else {
+          setCustomLayoutData(null);
           setUseCustomLayout(false);
           if (!isStoreStudioEnabled) {
             console.log(`[StoreHome]${logPrefix} Store Studio is disabled, using default layout`);
@@ -204,7 +213,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
     }
   }, [tenantId]);
 
-  // Check if tenant has store studio enabled and a custom layout saved
+  // Check if tenant has store studio enabled and a custom layout saved (only on mount)
   useEffect(() => {
     const initCustomLayout = async () => {
       if (!tenantId) {
@@ -216,17 +225,6 @@ const StoreHome: React.FC<StoreHomeProps> = ({
     };
     initCustomLayout();
   }, [tenantId, checkAndUpdateCustomLayout]);
-
-  // Listen for real-time updates to store_studio_config (debounced to prevent loops)
-  useDataRefreshDebounced(
-    (key) => {
-      console.log('[StoreHome] Detected update to', key, '- refetching...');
-      checkAndUpdateCustomLayout(' (live update)');
-    },
-    1000, // Debounce 1 second to prevent rapid loops
-    ['store_studio_config', 'store_layout'],
-    tenantId
-  );
 
   // === HANDLERS ===
   const selectInstantVariant = useCallback((product: Product): ProductVariantSelection => ({
@@ -383,9 +381,14 @@ const StoreHome: React.FC<StoreHomeProps> = ({
             onBuyNow={handleBuyNow}
             onQuickView={setQuickViewProduct}
             onAddToCart={handleAddProductToCartFromCard}
+            wishlist={wishlist}
+            onToggleWishlist={onToggleWishlist}
             onCategoryClick={handleCategoryClick}
             onBrandClick={(slug) => handleCategoryClick(slug)}
             onOpenChat={onOpenChat}
+            layoutData={customLayoutData}
+            storeStudioEnabled={storeStudioEnabled}
+            productDisplayOrder={productDisplayOrder}
           />
         </Suspense>
       ) : websiteConfig?.readyTheme?.startsWith('storefront') ? (
@@ -440,6 +443,8 @@ const StoreHome: React.FC<StoreHomeProps> = ({
               onQuickView={setQuickViewProduct}
               onAddToCart={handleAddProductToCartFromCard}
               productCardStyle={websiteConfig?.productCardStyle}
+              wishlist={wishlist}
+              onToggleWishlist={onToggleWishlist}
             />
           </Suspense>
         ) : (
@@ -455,6 +460,8 @@ const StoreHome: React.FC<StoreHomeProps> = ({
                   onBuyNow={handleBuyNow}
                   onQuickView={setQuickViewProduct}
                   onAddToCart={handleAddProductToCartFromCard}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
                   productCardStyle={websiteConfig?.productCardStyle}
                   sectionRef={productsSectionRef as React.RefObject<HTMLElement>}
                 />
@@ -471,6 +478,8 @@ const StoreHome: React.FC<StoreHomeProps> = ({
                     onBuyNow={handleBuyNow}
                     onQuickView={setQuickViewProduct}
                     onAddToCart={handleAddProductToCartFromCard}
+                    wishlist={wishlist}
+                    onToggleWishlist={onToggleWishlist}
                     productCardStyle={websiteConfig?.productCardStyle}
                     style={websiteConfig?.showcaseSectionStyle}
                   />
@@ -506,6 +515,8 @@ const StoreHome: React.FC<StoreHomeProps> = ({
                     onBuyNow={handleBuyNow}
                     onQuickView={setQuickViewProduct}
                     onAddToCart={handleAddProductToCartFromCard}
+                    wishlist={wishlist}
+                    onToggleWishlist={onToggleWishlist}
                     productCardStyle={websiteConfig?.productCardStyle}
                     productSectionStyle={websiteConfig?.productSectionStyle}
                   />
@@ -528,6 +539,8 @@ const StoreHome: React.FC<StoreHomeProps> = ({
                     onBuyNow={handleBuyNow}
                     onQuickView={setQuickViewProduct}
                     onAddToCart={handleAddProductToCartFromCard}
+                    wishlist={wishlist}
+                    onToggleWishlist={onToggleWishlist}
                     productCardStyle={websiteConfig?.productCardStyle}
                     productSectionStyle={websiteConfig?.productSectionStyle}
                   />
@@ -564,6 +577,8 @@ const StoreHome: React.FC<StoreHomeProps> = ({
                         onBuyNow={handleBuyNow}
                         onQuickView={setQuickViewProduct}
                         onAddToCart={handleAddProductToCartFromCard}
+                        wishlist={wishlist}
+                        onToggleWishlist={onToggleWishlist}
                         productCardStyle={websiteConfig?.productCardStyle}
                         productSectionStyle={websiteConfig?.productSectionStyle}
                       />
@@ -587,6 +602,8 @@ const StoreHome: React.FC<StoreHomeProps> = ({
                     onBuyNow={handleBuyNow}
                     onQuickView={setQuickViewProduct}
                     onAddToCart={handleAddProductToCartFromCard}
+                    wishlist={wishlist}
+                    onToggleWishlist={onToggleWishlist}
                     productCardStyle={websiteConfig?.productCardStyle}
                     productSectionStyle={websiteConfig?.productSectionStyle}
                   />

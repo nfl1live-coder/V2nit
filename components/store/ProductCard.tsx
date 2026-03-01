@@ -10,7 +10,10 @@ export interface ProductCardProps {
     onClick: (product: Product) => void;
     onBuyNow?: (product: Product) => void;
     onAddToCart?: (product: Product) => void;
-    showSoldCount?: boolean;    
+    showSoldCount?: boolean;
+    wishlist?: number[];
+    onToggleWishlist?: (id: number) => void;
+    
 }
 
 const ProductCardComponent: React.FC<ProductCardProps> = ({ 
@@ -18,9 +21,11 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({
     onClick, 
     onBuyNow, 
     onAddToCart,
-    showSoldCount 
+    showSoldCount,
+    wishlist = [],
+    onToggleWishlist
 }) => {
-    const [isWishlisted, setIsWishlisted] = useState(false);
+    const isWishlisted = wishlist.includes(product.id);
     const [isHovered, setIsHovered] = useState(false);
     const imageSrc = normalizeImageUrl(product.galleryImages?.[0] || product.image);
     
@@ -57,7 +62,7 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({
 
             {/* Wishlist Button */}
             <button
-                onClick={(e) => { e.stopPropagation(); setIsWishlisted(!isWishlisted); }}
+                onClick={(e) => { e.stopPropagation(); onToggleWishlist?.(product.id); }}
                 className="absolute to p-2 right-2 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-sm flex items-center justify-center hover:scale-110 transition-all duration-200"
                 aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
             >

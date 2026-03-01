@@ -3,7 +3,10 @@ import { ProductCard } from '../StoreProductComponents';
 import { ProductFilter, SortOption } from '../ProductFilter';
 import { EmptySearchState } from '../EmptyStates';
 
-interface Props { searchTerm: string; products: Product[]; sortOption: SortOption; onSortChange: (o: SortOption) => void; onClearSearch: () => void; onProductClick: (p: Product) => void; onBuyNow: (p: Product) => void; onQuickView: (p: Product) => void; onAddToCart: (p: Product) => void; productCardStyle?: string; }
+interface Props { searchTerm: string; products: Product[]; sortOption: SortOption; onSortChange: (o: SortOption) => void; onClearSearch: () => void; onProductClick: (p: Product) => void; onBuyNow: (p: Product) => void; onQuickView: (p: Product) => void; onAddToCart: (p: Product) => void; productCardStyle?: string; // wishlist
+  wishlist?: number[];
+  onToggleWishlist?: (id: number) => void;
+ }
 
 export const SearchResultsSection = ({ searchTerm, products, sortOption, onSortChange, onClearSearch, onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle }: Props) => (
   <section className="rounded-2xl border border-gray-100 bg-white p-4 sm:p-6 shadow-sm">
@@ -19,7 +22,7 @@ export const SearchResultsSection = ({ searchTerm, products, sortOption, onSortC
       </div>
     </div>
     {products.length ? (
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5 auto-rows-max">{products.map(p => <ProductCard key={`search-${p.id}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart}/>)}</div>
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5 auto-rows-max">{products.map(p => <ProductCard key={`search-${p.id}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist}/>)}</div>
     ) : <EmptySearchState searchTerm={searchTerm} onClearSearch={onClearSearch}/>}
   </section>
 );

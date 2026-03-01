@@ -11,20 +11,25 @@ interface Props {
   onBuyNow?: (p: Product) => void; 
   onQuickView?: (p: Product) => void; 
   onAddToCart?: (p: Product) => void; 
+  // wishlist props
+  wishlist?: number[];
+  onToggleWishlist?: (id: number) => void;
   productCardStyle?: string; 
   sectionRef?: RefObject<HTMLElement>;
   onViewAll?: () => void;
 }
 
 // Modern Product Card - Same style as regular products
-const ProductCard = ({ product, onProductClick, onBuyNow, onAddToCart, onQuickView }: { 
+const ProductCard = ({ product, onProductClick, onBuyNow, onAddToCart, onQuickView, wishlist = [], onToggleWishlist }: { 
   product: Product; 
   onProductClick: (p: Product) => void;
   onBuyNow?: (p: Product) => void;
   onAddToCart?: (p: Product) => void;
   onQuickView?: (p: Product) => void;
+  wishlist?: number[];
+  onToggleWishlist?: (id: number) => void;
 }) => {
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const isWishlisted = wishlist.includes(product.id);
   const [isHovered, setIsHovered] = useState(false);
   const imageSrc = normalizeImageUrl(product.galleryImages?.[0] || product.image);
   const discountPercent = product.originalPrice && product.price 
@@ -40,19 +45,19 @@ const ProductCard = ({ product, onProductClick, onBuyNow, onAddToCart, onQuickVi
       {/* Image Section - Compact on Mobile */}
       <div className="relative aspect-square bg-gray-50 overflow-hidden">
         {/* Wishlist - Smaller on Mobile */}
-        <button 
-          onClick={(e) => { e.stopPropagation(); setIsWishlisted(!isWishlisted); }}
+        {/* <button 
+          onClick={(e) => { e.stopPropagation(); onToggleWishlist?.(product.id); }}
           className="absolute top-1 right-1 sm:to p-2 sm:right-2 z-10 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/90 shadow-sm flex items-center justify-center hover:scale-110 transition-transform"
         >
           <Heart size={12} className={`sm:w-4 sm:h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
-        </button>
+        </button> */}
         
         {/* Discount Badge - Compact on Mobile */}
-        {discountPercent && discountPercent > 0 && (
+        {/* {discountPercent && discountPercent > 0 && (
           <span className="absolute top-1 left-1 sm:to p-2 sm:left-2 bg-red-500 text-white text-[8px] sm:text-[10px] font-bold px-1 sm:px-2 py-0.5 sm:py-1 rounded sm:rounded-md shadow-sm">
             -{discountPercent}%
-          </span>
-        )}
+          </span> */}
+      
         
         <img
           src={imageSrc}
@@ -115,7 +120,7 @@ const ProductCard = ({ product, onProductClick, onBuyNow, onAddToCart, onQuickVi
   );
 };
 
-export const FlashSalesSection = ({ products, showCounter, countdown, onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, sectionRef, onViewAll }: Props) => {
+export const FlashSalesSection = ({ products, showCounter, countdown, onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, sectionRef, onViewAll }: Props) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -254,6 +259,8 @@ export const FlashSalesSection = ({ products, showCounter, countdown, onProductC
                   onBuyNow={onBuyNow}
                   onAddToCart={onAddToCart}
                   onQuickView={onQuickView}
+                  wishlist={wishlist}
+                  onToggleWishlist={onToggleWishlist}
                 />
               ))}
             </div>

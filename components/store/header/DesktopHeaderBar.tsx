@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from 'react';
-import { ShoppingCart, Heart, User, LogOut, ChevronDown, Truck, UserCircle, Menu, Phone, Mail } from 'lucide-react';
+import { ShoppingCart, User, LogOut, ChevronDown, Truck, UserCircle, Menu, Phone, Mail } from 'lucide-react';
 import { normalizeImageUrl } from '../../../utils/imageUrlHelper';
 import type { HeaderSearchProps } from './headerTypes';
 import { DesktopSearchBar } from './HeaderSearchBar';
@@ -43,7 +43,7 @@ const Badge = memo<{ count: number }>(({ count }) =>
 // Style 1: Default - Clean Modern with glassmorphism
 const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
   resolvedHeaderLogo, logoKey, onHomeClick, searchProps,
-  wishlistBadgeCount, cartBadgeCount, onWishlistOpen, onCartOpen,
+  wishlistBadgeCount, cartBadgeCount, onCartOpen,
   user, onLoginClick, onProfileClick, onTrackOrder, onLogoutClick,
   isMenuOpen, onMenuToggle, onMenuClose, menuRef,
   categoriesList, onCategoriesClick, onCategorySelect,
@@ -65,7 +65,7 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
         </button>
         <DesktopSearchBar {...searchProps} />
         <div className="flex items-center gap-2 text-gray-600">
-          {[{ icon: <Heart size={20} strokeWidth={1.8} />, label: 'Wishlist', badge: wishlistBadgeCount, onClick: onWishlistOpen }, { icon: <ShoppingCart size={20} strokeWidth={1.8} />, label: 'Cart', badge: cartBadgeCount, onClick: onCartOpen }].map(({ icon, label, badge, onClick }) => (
+          {[{ icon: <ShoppingCart size={20} strokeWidth={1.8} />, label: 'Cart', badge: cartBadgeCount, onClick: onCartOpen }].map(({ icon, label, badge, onClick }) => (
             <button key={label} type="button" className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl hover:bg-gray-50/80 hover:text-theme-primary transition-all group" onClick={onClick}>
               <div className="relative">{icon}<Badge count={badge} /></div>
               <span className="text-sm font-medium text-gray-700 group-hover:text-theme-primary">{label}</span>
@@ -138,10 +138,10 @@ const HeaderStyle2 = memo<DesktopHeaderBarProps>(({
         </nav>
         <div className="flex-1"><DesktopSearchBar {...searchProps} /></div>
         <div className="flex items-center gap-3">
-          <button type="button" className="relative p-2 text-gray-600 hover:text-theme-primary" onClick={onWishlistOpen}>
+          {/* <button type="button" className="relative p-2 text-gray-600 hover:text-theme-primary" onClick={onWishlistOpen}>
             <Heart size={22} strokeWidth={1.5} />
             {wishlistBadgeCount > 0 && <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{wishlistBadgeCount}</span>}
-          </button>
+          </button> */}
           <button type="button" className="relative p-2 text-gray-600 hover:text-theme-primary" onClick={onCartOpen}>
             <ShoppingCart size={22} strokeWidth={1.5} />
             {cartBadgeCount > 0 && <span className="absolute -top-1 -right-1 bg-theme-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartBadgeCount}</span>}
@@ -193,10 +193,10 @@ const HeaderStyle3 = memo<DesktopHeaderBarProps>(({
           </button>
           <div className="flex-1 max-w-2xl"><DesktopSearchBar {...searchProps} /></div>
           <div className="flex items-center gap-2">
-            <button type="button" className="relative p-2.5 rounded-lg text-white/90 hover:bg-white/10 transition-all" onClick={onWishlistOpen}>
+            {/* <button type="button" className="relative p-2.5 rounded-lg text-white/90 hover:bg-white/10 transition-all" onClick={onWishlistOpen}>
               <Heart size={22} strokeWidth={1.8} />
               {wishlistBadgeCount > 0 && <span className="absolute top-1 right-1 bg-white text-theme-primary text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{wishlistBadgeCount}</span>}
-            </button>
+            </button> */}
             <button type="button" className="relative p-2.5 rounded-lg text-white/90 hover:bg-white/10 transition-all" onClick={onCartOpen}>
               <ShoppingCart size={22} strokeWidth={1.8} />
               {cartBadgeCount > 0 && <span className="absolute top-1 right-1 bg-white text-theme-primary text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartBadgeCount}</span>}
@@ -286,10 +286,10 @@ const HeaderStyle4 = memo<DesktopHeaderBarProps>(({
           </div>
           <div className="flex-1"><DesktopSearchBar {...searchProps} /></div>
           <div className="flex items-center gap-4">
-            <button type="button" className="flex flex-col items-center text-gray-600 hover:text-theme-primary transition-colors" onClick={onWishlistOpen}>
+            {/* <button type="button" className="flex flex-col items-center text-gray-600 hover:text-theme-primary transition-colors" onClick={onWishlistOpen}>
               <div className="relative"><Heart size={22} />{wishlistBadgeCount > 0 && <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{wishlistBadgeCount}</span>}</div>
               <span className="text-[10px] mt-0.5">Wishlist</span>
-            </button>
+            </button> */}
             <button type="button" className="flex flex-col items-center text-gray-600 hover:text-theme-primary transition-colors" onClick={onCartOpen}>
               <div className="relative"><ShoppingCart size={22} />{cartBadgeCount > 0 && <span className="absolute -top-1 -right-1 bg-theme-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartBadgeCount}</span>}</div>
               <span className="text-[10px] mt-0.5">Cart</span>
@@ -354,10 +354,10 @@ const HeaderStyle5 = memo<DesktopHeaderBarProps>(({
         </nav>
         <div className="flex-1 max-w-xl"><DesktopSearchBar {...searchProps} /></div>
         <div className="flex items-center gap-2">
-          <button type="button" className="relative p-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all" onClick={onWishlistOpen}>
+          {/* <button type="button" className="relative p-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all" onClick={onWishlistOpen}>
             <Heart size={22} strokeWidth={1.8} />
             {wishlistBadgeCount > 0 && <span className="absolute top-1 right-1 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{wishlistBadgeCount}</span>}
-          </button>
+          </button> */}
           <button type="button" className="relative p-2.5 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all" onClick={onCartOpen}>
             <ShoppingCart size={22} strokeWidth={1.8} />
             {cartBadgeCount > 0 && <span className="absolute top-1 right-1 bg-cyan-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartBadgeCount}</span>}
