@@ -2,7 +2,10 @@
 import React, { lazy, Suspense, useCallback, useState, useEffect } from 'react';
 import type { Product, User, WebsiteConfig, Order, ProductVariantSelection } from '../types';
 import { noCacheFetchOptions } from '../utils/fetchHelpers';
-import { onDataRefresh } from '../services/DataService';
+import { useDataRefreshDebounced } from '../hooks/useDataRefresh';
+
+// Import storefront improvements CSS
+import '../styles/storefront-improvements.css';
 
 // Custom hook with all business logic
 import { useStoreHome, formatSegment } from '../hooks/useStoreHome';
@@ -214,23 +217,16 @@ const StoreHome: React.FC<StoreHomeProps> = ({
     initCustomLayout();
   }, [tenantId, checkAndUpdateCustomLayout]);
 
-  // Listen for real-time updates to store_studio_config
-  useEffect(() => {
-    if (!tenantId) return;
-
-    const unsubscribe = onDataRefresh((key, updatedTenantId, fromSocket) => {
-      // Only respond to updates for this tenant
-      if (updatedTenantId !== tenantId) return;
-      
-      // Refetch when store studio settings or layout changes
-      if (key === 'store_studio_config' || key === 'store_layout') {
-        console.log('[StoreHome] Detected update to', key, '- refetching...');
-        checkAndUpdateCustomLayout(' (live update)');
-      }
-    });
-
-    return () => unsubscribe();
-  }, [tenantId, checkAndUpdateCustomLayout]);
+  // Listen for real-time updates to store_studio_config (debounced to prevent loops)
+  useDataRefreshDebounced(
+    (key) => {
+      console.log('[StoreHome] Detected update to', key, '- refetching...');
+      checkAndUpdateCustomLayout(' (live update)');
+    },
+    1000, // Debounce 1 second to prevent rapid loops
+    ['store_studio_config', 'store_layout'],
+    tenantId
+  );
 
   // === HANDLERS ===
   const selectInstantVariant = useCallback((product: Product): ProductVariantSelection => ({
@@ -397,7 +393,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
           <StoreFrontThemePage
             products={products}
             categories={categories}
-            brands={brands}
+            brands={brands || []}
             websiteConfig={websiteConfig}
             logo={logo}
             onProductClick={onProductClick}

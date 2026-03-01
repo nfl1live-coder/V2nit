@@ -71,21 +71,24 @@ const generateUniqueSlug = async (baseSlug: string, tenantId: string, excludeId?
   
   let counter = 0;
   let uniqueSlug = slug;
+  const maxAttempts = 100; // Safety limit to prevent infinite loops
   
-  while (true) {
+  while (counter < maxAttempts) {
     const query: any = { tenantId, urlSlug: uniqueSlug };
     if (excludeId) {
       query._id = { $ne: excludeId };
     }
     
     const existing = await OfferPage.findOne(query);
-    if (!existing) break;
+    if (!existing) return uniqueSlug;
     
     counter++;
     uniqueSlug = `${slug}-${counter}`;
   }
   
-  return uniqueSlug;
+  // If we've hit max attempts, add a timestamp-based suffix to guarantee uniqueness
+  const timestamp = Date.now();
+  return `${slug}-${timestamp}`;
 };
 
 // GET /api/landing-page - Get all offer pages for tenant

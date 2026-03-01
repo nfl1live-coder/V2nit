@@ -99,45 +99,88 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({
             </div>
 
             {/* Details */}
-            <div className="px-2.5 md:px-3 pb-2.5 md:pb-3 pt-2 flex-1 flex flex-col">
-                {/* Rating */}
-                {product.rating !== undefined && product.rating > 0 && (
-                    <div className="flex items-center gap-1 mb-1">
-                        <div className="flex">
-                            {[1, 2, 3, 4, 5].map((s) => (
-                                <Star 
-                                    key={s} 
-                                    size={10} 
-                                    className={s <= Math.round(product.rating || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} 
-                                />
-                            ))}
+            <div className="px-3 md:px-3.5 pb-3 md:pb-4 pt-2.5 flex-1 flex flex-col">
+                {/* Rating & Reviews */}
+                <div className="flex items-center justify-between mb-2">
+                    {product.rating !== undefined && product.rating > 0 ? (
+                        <div className="flex items-center gap-1.5 bg-amber-50 px-2 py-1 rounded-full">
+                            <div className="flex gap-0.5">
+                                {[1, 2, 3, 4, 5].map((s) => (
+                                    <Star 
+                                        key={s} 
+                                        size={12} 
+                                        className={s <= Math.round(product.rating || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-300'} 
+                                        strokeWidth={1.5}
+                                    />
+                                ))}
+                            </div>
+                            {product.reviews !== undefined && product.reviews > 0 && (
+                                <span className="text-[10px] font-medium text-amber-700">({product.reviews})</span>
+                            )}
                         </div>
-                        {product.reviews !== undefined && (
-                            <span className="text-[9px] text-gray-400">({product.reviews})</span>
-                        )}
-                    </div>
-                )}
+                    ) : (
+                        <span className="text-[11px] text-gray-400">No ratings yet</span>
+                    )}
+                    {product.sold && (
+                        <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                            Sold: {product.sold}
+                        </span>
+                    )}
+                </div>
 
                 <h3 
-                    className="font-medium text-gray-800 text-xs md:text-sm leading-tight mb-1.5 line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors"
-                    style={{ minHeight: '32px' }}
+                    className="font-medium text-gray-800 text-sm md:text-[13px] leading-tight mb-2 line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors duration-200"
+                    style={{ minHeight: '36px' }}
                     onClick={() => onClick(product)}
                 >
                     {product.name}
                 </h3>
 
-                <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="text-base md:text-lg font-bold text-theme-primary">৳{product.price?.toLocaleString()}</span>
+                {/* Pricing Section */}
+                <div className="flex items-center gap-2 mb-3">
+                    <span className="text-lg md:text-xl font-bold text-theme-primary">৳{product.price?.toLocaleString()}</span>
                     {product.originalPrice && (
-                        <span className="text-[10px] md:text-xs text-gray-400 line-through">৳{product.originalPrice?.toLocaleString()}</span>
+                        <>
+                            <span className="text-xs md:text-sm text-gray-400 line-through">৳{product.originalPrice?.toLocaleString()}</span>
+                            {discountPercent && (
+                                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+                                    Save {discountPercent}%
+                                </span>
+                            )}
+                        </>
                     )}
                 </div>
 
+                {/* Stock Status */}
+                {product.stock !== undefined && (
+                    <div className={`text-xs font-medium mb-2.5 px-2.5 py-1.5 rounded-lg text-center ${
+                        product.stock > 10 
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : product.stock > 0
+                            ? 'bg-amber-50 text-amber-700'
+                            : 'bg-red-50 text-red-700'
+                    }`}>
+                        {product.stock > 10 
+                            ? `${product.stock} In Stock`
+                            : product.stock > 0
+                            ? `Only ${product.stock} Left!`
+                            : 'Out of Stock'
+                        }
+                    </div>
+                )}
+
                 {/* Buy Now Button */}
                 <button 
-                    className={`w-full py-2 md:py-2.5 bg-gradient-theme-r text-white text-xs md:text-sm font-semibold rounded-lg hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ${isOutOfStock ? 'opacity-40 cursor-not-allowed from-gray-400 to-gray-500' : ''}`}
+                    className={`w-full py-2.5 md:py-3 font-semibold rounded-lg transition-all duration-200 text-xs md:text-sm ${
+                        isOutOfStock 
+                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                            : product.stock !== undefined && product.stock <= 10 && product.stock > 0
+                            ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]'
+                            : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]'
+                    }`}
                     onClick={handleBuyNow}
                     disabled={isOutOfStock}
+                    title={isOutOfStock ? 'This product is out of stock' : 'Click to proceed to checkout'}
                 >
                     {isOutOfStock ? 'Out of Stock' : 'Buy Now'}
                 </button>

@@ -528,6 +528,7 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
   const initialConfigRef = useRef<string>('');
   const [newSocialPlatform, setNewSocialPlatform] = useState<string>('Facebook');
   const [newSocialUrl, setNewSocialUrl] = useState<string>('');
+  const [newContactSubject, setNewContactSubject] = useState<string>('');
 
   // Initialize socialLogins and offers in websiteConfiguration if not present
   useEffect(() => {
@@ -943,6 +944,43 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
             placeholder="Your Address"
             flex
           />
+        </div>
+
+        {/* Contact Subjects */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <p style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 600, fontSize: '14px', margin: 0 }}>Contact Subjects</p>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <input
+              value={newContactSubject}
+              onChange={(e) => setNewContactSubject(e.target.value)}
+              placeholder="e.g. Order Support"
+              style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid #e5e7eb', flex: 1 }}
+            />
+            <button
+              onClick={() => {
+                const v = (newContactSubject || '').trim();
+                if (!v) return;
+                setWebsiteConfiguration(prev => ({ ...prev, contactSubjects: [...(prev.contactSubjects || []), v] }));
+                setNewContactSubject('');
+              }}
+              style={{ padding: '10px 14px', borderRadius: 8, backgroundColor: '#0ea5e9', color: 'white', border: 'none' }}
+            >
+              Add
+            </button>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {(websiteConfiguration.contactSubjects || []).map((s, i) => (
+              <div key={i} style={{ background: '#f3f4f6', padding: '6px 10px', borderRadius: 20, display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ fontSize: 13 }}>{s}</span>
+                <button
+                  onClick={() => setWebsiteConfiguration(prev => ({ ...prev, contactSubjects: (prev.contactSubjects || []).filter((_, idx) => idx !== i) }))}
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
 

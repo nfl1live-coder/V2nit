@@ -14,7 +14,7 @@ const mockEnv = {
   VITE_CDN_IMAGE_QUALITY: '80',
   VITE_CDN_IMAGE_FORMAT: 'auto',
   VITE_CDN_IMAGE_FIT: 'cover',
-  VITE_API_BASE_URL: 'https://api.example.com',
+  VITE_API_BASE_URL: 'https://api.allinbangla.com',
 };
 
 vi.mock('../config/cdnConfig', async (importOriginal) => {

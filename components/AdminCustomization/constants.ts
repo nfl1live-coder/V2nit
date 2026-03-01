@@ -51,6 +51,8 @@ export const DEFAULT_WEBSITE_CONFIG: WebsiteConfig = {
   adminNoticeText: '',
   categorySectionStyle: 'style5',
   storeName: ''
+  ,
+  contactSubjects: []
 };
 
 // Demo images for style previews - webp format URLs for each theme section and style

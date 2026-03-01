@@ -42,6 +42,8 @@ interface ProductMainProduct {
     features?: string[];
     modelNumber?: string;
     origin?: string;
+    stock?: number;
+    totalSold?: number;
     variantGroups?: VariantGroup[];
     details?: Array<{ type: string; description: string }>;
     shortDescription?: string;
@@ -184,6 +186,21 @@ export default function ProductMain({
                             : product.title}
                     </h1>
 
+                    {/* Badges: discount, stock, sold */}
+                    <div className="flex items-center gap-3 mb-4">
+                        {product.discount > 0 && (
+                            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-md text-sm font-semibold">
+                                Save {product.discount}%
+                            </span>
+                        )}
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-sm font-medium ${product.stock && product.stock > 0 ? 'bg-emerald-50 text-emerald-800' : 'bg-red-50 text-red-700'}`}>
+                            {product.stock && product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                        </span>
+                        {product.totalSold ? (
+                            <span className="text-sm text-gray-600">Sold: {product.totalSold}</span>
+                        ) : null}
+                    </div>
+
                     {/* Category & Ratings desktop */}
                     <div className="hidden lg:flex flex-wrap items-center justify-between gap-x-3 font-lato gap-y-1 mb-4 text-sm">
                         <div className="flex items-center gap-6">
@@ -281,14 +298,18 @@ export default function ProductMain({
                     <div className="flex gap-2 mb-3 flex-wrap">
                         <button
                             onClick={onAddToCart}
-                            className="flex-1 font-lato text-white py-3 rounded-[8px] font-bold flex items-center justify-center gap-2 bg-[linear-gradient(0deg,#38BDF8_0%,#1E90FF_100%)] cursor-pointer"
+                            aria-label="Add to cart"
+                            disabled={product.stock !== undefined && product.stock <= 0}
+                            className={`flex-1 font-lato text-white py-3 rounded-[8px] font-bold flex items-center justify-center gap-2 transition-shadow duration-150 ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 cursor-not-allowed bg-gray-400' : 'bg-[linear-gradient(0deg,#38BDF8_0%,#1E90FF_100%)] hover:shadow-lg'}`}
                         >
                             <img src="https://details-snit.vercel.app/images/shopping.svg" width={24} height={24} alt="shopping" />
                             কার্ট
                         </button>
                         <button
                             onClick={onCheckout}
-                            className="flex-1 font-lato text-white py-3 rounded-[8px] font-bold flex items-center justify-center gap-2 bg-[linear-gradient(180deg,#FF6A00_0%,#FF9F1C_100%)] cursor-pointer"
+                            aria-label="Buy now"
+                            disabled={product.stock !== undefined && product.stock <= 0}
+                            className={`flex-1 font-lato text-white py-3 rounded-[8px] font-bold flex items-center justify-center gap-2 transition-shadow duration-150 ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 cursor-not-allowed bg-gray-400' : 'bg-[linear-gradient(180deg,#FF6A00_0%,#FF9F1C_100%)] hover:shadow-lg'}`}
                         >
                             <img src="https://details-snit.vercel.app/images/atc.svg" width={24} height={24} alt="shopping" />
                             অর্ডার করুন
@@ -296,6 +317,33 @@ export default function ProductMain({
                     </div>
 
                     <CallOrderBar phoneNumber={phoneNumber} onShare={onShare} />
+                </div>
+            </div>
+            {/* Mobile sticky action bar */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t px-4 py-3">
+                <div className="flex items-center justify-between gap-3">
+                    <div>
+                        <div className="text-sm text-gray-600">{product.title}</div>
+                        <div className="font-bold text-lg text-black">{currency}{(product.price + extraPrice).toFixed(2)}</div>
+                    </div>
+                    <div className="flex gap-2 w-2/3">
+                        <button
+                            onClick={onAddToCart}
+                            aria-label="Add to cart mobile"
+                            disabled={product.stock !== undefined && product.stock <= 0}
+                            className={`flex-1 text-white py-2 rounded-[8px] font-semibold ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:shadow-md'}`}
+                        >
+                            Add
+                        </button>
+                        <button
+                            onClick={onCheckout}
+                            aria-label="Buy now mobile"
+                            disabled={product.stock !== undefined && product.stock <= 0}
+                            className={`flex-1 text-white py-2 rounded-[8px] font-semibold ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 bg-gray-400 cursor-not-allowed' : 'bg-amber-500 hover:shadow-md'}`}
+                        >
+                            Buy
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

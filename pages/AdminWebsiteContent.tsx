@@ -296,7 +296,10 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
             websiteConfiguration={websiteConfiguration}
             setWebsiteConfiguration={setWebsiteConfiguration}
             tenantId={tenantId}
-            onUpdateWebsiteConfig={onUpdateWebsiteConfig}
+            onUpdateWebsiteConfig={async (cfg) => {
+              if (onUpdateWebsiteConfig) await onUpdateWebsiteConfig(cfg);
+              try { if (tenantId) await DataService.clearServerCache(tenantId); } catch (e) { console.warn('Failed clearing server cache after carousel save', e); }
+            }}
             isSavingRef={isSavingRef}
             hasUnsavedChangesRef={hasUnsavedChangesRef}
             prevWebsiteConfigRef={prevWebsiteConfigRef}
@@ -310,7 +313,10 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
             setWebsiteConfiguration={setWebsiteConfiguration}
             tenantId={tenantId}
             products={products}
-            onUpdateWebsiteConfig={onUpdateWebsiteConfig}
+            onUpdateWebsiteConfig={async (cfg) => {
+              if (onUpdateWebsiteConfig) await onUpdateWebsiteConfig(cfg);
+              try { if (tenantId) await DataService.clearServerCache(tenantId); } catch (e) { console.warn('Failed clearing server cache after campaigns save', e); }
+            }}
             hasUnsavedChangesRef={hasUnsavedChangesRef}
             prevWebsiteConfigRef={prevWebsiteConfigRef}
             lastSaveTimestampRef={lastSaveTimestampRef}
@@ -322,7 +328,10 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
             websiteConfiguration={websiteConfiguration}
             setWebsiteConfiguration={setWebsiteConfiguration}
             tenantId={tenantId}
-            onUpdateWebsiteConfig={onUpdateWebsiteConfig}
+            onUpdateWebsiteConfig={async (cfg) => {
+              if (onUpdateWebsiteConfig) await onUpdateWebsiteConfig(cfg);
+              try { if (tenantId) await DataService.clearServerCache(tenantId); } catch (e) { console.warn('Failed clearing server cache after popup save', e); }
+            }}
             hasUnsavedChangesRef={hasUnsavedChangesRef}
             prevWebsiteConfigRef={prevWebsiteConfigRef}
             lastSaveTimestampRef={lastSaveTimestampRef}
@@ -336,7 +345,10 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
             logo={logo}
             onUpdateLogo={onUpdateLogo}
             tenantId={tenantId}
-            onSave={onUpdateWebsiteConfig}
+            onSave={async (cfg) => {
+              if (onUpdateWebsiteConfig) await onUpdateWebsiteConfig(cfg);
+              try { if (tenantId) await DataService.clearServerCache(tenantId); } catch (e) { console.warn('Failed clearing server cache after website info save', e); }
+            }}
           />
         )}
 
@@ -344,7 +356,10 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
           <ChatSettingsTab
             websiteConfiguration={websiteConfiguration}
             setWebsiteConfiguration={setWebsiteConfiguration}
-            onSave={onUpdateWebsiteConfig}
+            onSave={async () => {
+              if (onUpdateWebsiteConfig) await onUpdateWebsiteConfig(websiteConfiguration);
+              try { if (tenantId) await DataService.clearServerCache(tenantId); } catch (e) { console.warn('Failed clearing server cache after chat settings save', e); }
+            }}
           />
         )}
 
@@ -354,7 +369,10 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
             setWebsiteConfiguration={setWebsiteConfiguration}
             tenantId={tenantId}
             tenantSubdomain={tenantSubdomain}
-            onSave={onUpdateWebsiteConfig}
+            onSave={async (cfg) => {
+              if (onUpdateWebsiteConfig) await onUpdateWebsiteConfig(cfg);
+              try { if (tenantId) await DataService.clearServerCache(tenantId); } catch (e) { console.warn('Failed clearing server cache after landing page save', e); }
+            }}
           />
         )}
       </div>

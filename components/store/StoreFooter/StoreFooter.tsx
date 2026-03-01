@@ -42,7 +42,7 @@ const defaultQuickLinks = [
   { id: '1', label: 'Home', url: '/' },
   { id: '2', label: 'Terms and Conditions', url: '/termsnconditions' },
   { id: '3', label: 'Return Policy', url: '/returnpolicy' },
-  { id: '4', label: 'Contact', url: '/contact' }
+  // { id: '4', label: 'Contact', url: '/contact' }
 ];
 
 const defaultUsefulLinks = [

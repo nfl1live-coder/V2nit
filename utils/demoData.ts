@@ -17,6 +17,9 @@ export const DEMO_CAROUSEL_ITEMS: CarouselItem[] = [
     urlType: 'Internal',
     status: 'Publish',
     serial: 1,
+    subtitle: '',
+    title: '',
+    imageUrl: ''
   },
   {
     id: 'demo-2',
@@ -27,6 +30,9 @@ export const DEMO_CAROUSEL_ITEMS: CarouselItem[] = [
     urlType: 'Internal',
     status: 'Publish',
     serial: 2,
+    subtitle: '',
+    title: '',
+    imageUrl: ''
   },
   {
     id: 'demo-3',
@@ -37,6 +43,9 @@ export const DEMO_CAROUSEL_ITEMS: CarouselItem[] = [
     urlType: 'Internal',
     status: 'Publish',
     serial: 3,
+    subtitle: '',
+    title: '',
+    imageUrl: ''
   },
 ];
 
@@ -74,6 +83,8 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.5,
     reviews: 128,
+    title: '',
+    salePrice: undefined
   },
   {
     id: 2,
@@ -90,6 +101,8 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.8,
     reviews: 256,
+    title: '',
+    salePrice: undefined
   },
   {
     id: 3,
@@ -106,6 +119,8 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.3,
     reviews: 89,
+    title: '',
+    salePrice: undefined
   },
   {
     id: 4,
@@ -122,6 +137,8 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.6,
     reviews: 167,
+    title: '',
+    salePrice: undefined
   },
   {
     id: 5,
@@ -138,6 +155,8 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.4,
     reviews: 312,
+    title: '',
+    salePrice: undefined
   },
   {
     id: 6,
@@ -154,6 +173,8 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.7,
     reviews: 445,
+    title: '',
+    salePrice: undefined
   },
   {
     id: 7,
@@ -170,6 +191,8 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.5,
     reviews: 98,
+    title: '',
+    salePrice: undefined
   },
   {
     id: 8,
@@ -186,6 +209,8 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.6,
     reviews: 234,
+    title: '',
+    salePrice: undefined
   },
 ];
 
@@ -196,14 +221,24 @@ export const DEMO_WEBSITE_CONFIG: Partial<WebsiteConfig> = {
   headerLogo: 'https://hdnfltv.com/image/nitimages/04aad350-812e-4678-a009-7d576378b603.webp',
   carouselItems: DEMO_CAROUSEL_ITEMS,
   socialLinks: [
-    { id: '1', platform: 'facebook', url: 'https://facebook.com/systemnextit' },
-    { id: '2', platform: 'instagram', url: 'https://instagram.com/systemnextit' },
-    { id: '3', platform: 'twitter', url: 'https://twitter.com/systemnextit' },
+    {
+      id: '1', platform: 'facebook', url: 'https://facebook.com/systemnextit',
+      type: ''
+    },
+    {
+      id: '2', platform: 'instagram', url: 'https://instagram.com/systemnextit',
+      type: ''
+    },
+    {
+      id: '3', platform: 'twitter', url: 'https://twitter.com/systemnextit',
+      type: ''
+    },
   ],
   emails: ['contact@allinbangla.com'],
   phones: ['+880 1700-000000'],
   addresses: ['Head Office: Dhaka, Bangladesh'],
   showFlashSaleCounter: true,
+  contactSubjects: ['General Inquiry', 'Order Support', 'Returns', 'Partnerships'],
 };
 
 // Check if current domain is main domain (no tenant subdomain)

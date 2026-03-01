@@ -513,23 +513,38 @@ class DataServiceImpl {
     const { headers, body, ...rest } = init || {};
     const normalizedHeaders = this.normalizeHeaders(headers);
     const authHeaders = this.normalizeHeaders(getAuthHeader());
-    
-    const response = await fetch(buildApiUrl(path), {
-      credentials: 'include',
-      ...rest,
-      headers: {
-        ...authHeaders,
-        ...normalizedHeaders
-      },
-      body
-    });
-    const raw = await response.text();
-    const payload = raw ? JSON.parse(raw) : null;
-    if (!response.ok) {
-      const message = (payload as { error?: string } | null)?.error || `Request failed (${response.status})`;
-      throw new Error(message);
+
+    try {
+      const response = await fetch(buildApiUrl(path), {
+        credentials: 'include',
+        ...rest,
+        headers: {
+          ...authHeaders,
+          ...normalizedHeaders
+        },
+        body
+      });
+      const raw = await response.text();
+      const payload = raw ? JSON.parse(raw) : null;
+      if (!response.ok) {
+        const message = (payload as { error?: string } | null)?.error || `Request failed (${response.status})`;
+        throw new Error(message);
+      }
+      return payload as T;
+    } catch (err: any) {
+      // network error (e.g. connection refused) or parsing error
+      console.error(`[DataService] Network/API error while calling ${path}:`, err.message || err);
+      // show user-facing hint once if running in browser
+      if (typeof window !== 'undefined' && (err.message || '').toLowerCase().includes('failed to fetch')) {
+        try {
+          import('react-hot-toast').then(({ toast }) => {
+            toast.error('Unable to reach backend API. Make sure the server is running.');
+          });
+        } catch {}
+      }
+      // rethrow so callers can decide to fallback
+      throw err;
     }
-    return payload as T;
   }
 
   private async fetchTenantDocument<T>(key: string, tenantId?: string): Promise<T | null> {
@@ -767,8 +782,19 @@ class DataServiceImpl {
         websiteConfig: website_config ? { ...defaultWebsite, ...website_config } : defaultWebsite
       };
     } catch (error) {
+      console.warn('Bootstrap failed, falling back to cache/individual requests', error);
+      // if we have any cached data, return it immediately instead of hitting network again
+      const cachedProducts = getCachedData<Product[]>('products', tenantId) || [];
+      const cachedTheme = getCachedData<ThemeConfig | null>('theme_config', tenantId) ?? null;
+      const cachedWebsite = getCachedData<WebsiteConfig>('website_config', tenantId) || defaultWebsite;
+      if (cachedProducts.length || cachedTheme || cachedWebsite) {
+        return {
+          products: cachedProducts.map((p, i) => ({ ...p, id: p.id ?? i + 1 })),
+          themeConfig: cachedTheme,
+          websiteConfig: cachedWebsite
+        };
+      }
       if (!isBackground) {
-        console.warn('Bootstrap failed, falling back to individual requests', error);
         const [products, themeConfig, websiteConfig] = await Promise.all([
           this.getProducts(tenantId),
           this.getThemeConfig(tenantId),
@@ -784,6 +810,7 @@ class DataServiceImpl {
   private getDefaultWebsiteConfig(): WebsiteConfig {
     return {
       websiteName: '',
+      storeName: '',
       shortDescription: '',
       whatsappNumber: '',
       favicon: '',

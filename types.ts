@@ -459,6 +459,8 @@ export interface WebsiteConfig {
   aboutUs?: string;
   privacyPolicy?: string;
   termsAndConditions?: string;
+  contactInfo?: string;
+  contactSubjects?: string[];
   returnPolicy?: string;
   // Product Settings
   showProductSoldCount?: boolean;
