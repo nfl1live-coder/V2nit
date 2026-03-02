@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { 
   Search, 
@@ -13,6 +13,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { OrderService } from '../services/OrderService';
+import { onDataRefresh } from '../services/DataService';  // listen for real-time updates
 
 interface Order {
   image: any;
@@ -50,36 +51,61 @@ const IncompleteOrder: React.FC<IncompleteOrderProps> = ({ tenantId: propTenantI
   const [showModal, setShowModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  useEffect(() => {
-    const fetchIncompleteOrders = async () => {
-      if (!tenantId) {
-        console.warn('[IncompleteOrders] No tenantId provided, skipping fetch');
-        setOrders([]);
-        setIsLoading(false);
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const data = await OrderService.getOrders(tenantId, { status: 'Incomplete' });
-        const incomplete = data.map((o: any) => ({
-          name: o.customer,
-          orderId: o.id,
-          phone: o.phone,
-          dateTime: o.date ? new Date(o.date).toLocaleString() : 'N/A',
-          paymentType: o.paymentMethod || 'COD',
-          points: 0,
-          total: o.amount,
-          image: o.productImage
-        }));
-        setOrders(incomplete);
-      } catch (err) {
-        console.error('[IncompleteOrders] Failed to fetch:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchIncompleteOrders();
+  // fetch helper wrapped in useCallback so we can reuse it in multiple effects
+  const fetchIncompleteOrders = useCallback(async () => {
+    if (!tenantId) {
+      console.warn('[IncompleteOrders] No tenantId provided, skipping fetch');
+      setOrders([]);
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const data = await OrderService.getOrders(tenantId, { status: 'Incomplete' });
+      const incomplete = data.map((o: any) => ({
+        name: o.customer,
+        orderId: o.id,
+        phone: o.phone,
+        dateTime: o.date ? new Date(o.date).toLocaleString() : 'N/A',
+        paymentType: o.paymentMethod || 'COD',
+        points: 0,
+        total: o.amount,
+        image: o.productImage
+      }));
+
+      // replace the current list with whatever the server returned but keep existing entries in case the
+      // server is only returning new entries (some backends may trim or return limited sets)
+      setOrders(prev => {
+        // create a map for quick lookup
+        const map = new Map<string, Order>();
+        prev.forEach(o => o.orderId && map.set(o.orderId, o));
+        incomplete.forEach(o => {
+          if (o.orderId) map.set(o.orderId, o);
+        });
+        return Array.from(map.values());
+      });
+    } catch (err) {
+      console.error('[IncompleteOrders] Failed to fetch:', err);
+    } finally {
+      setIsLoading(false);
+    }
   }, [tenantId]);
+
+  // initial load / tenant change
+  useEffect(() => {
+    fetchIncompleteOrders();
+  }, [tenantId, fetchIncompleteOrders]);
+
+  // listen for socket/cache updates to orders and refresh automatically
+  useEffect(() => {
+    if (!tenantId) return;
+    const unsubscribe = onDataRefresh((key, tid) => {
+      if (key === 'orders' && tid === tenantId) {
+        fetchIncompleteOrders();
+      }
+    });
+    return unsubscribe;
+  }, [tenantId, fetchIncompleteOrders]);
 
   // Filtered data based on search
   const filteredOrders = useMemo(() => {
