@@ -12,8 +12,10 @@ import {
   Eye,
   Trash2
 } from 'lucide-react';
+import { OrderService } from '../services/OrderService';
 
 interface Order {
+  image: any;
   name?: string;
   orderId?: string;
   phone?: string;
@@ -22,14 +24,20 @@ interface Order {
   points?: number;
   total?: number;
 }
+import { useAppHandlers } from '@/hooks/useAppHandlers';
 
 /**
  * IncompleteOrder Component
  * A data table component for managing orders that haven't been completed.
  * Features: Search, Pagination, Empty States, and Responsive Design.
  */
-const IncompleteOrder = () => {
-  const { tenantId } = useParams<{ tenantId: string }>();
+interface IncompleteOrderProps {
+  tenantId?: string;
+}
+
+const IncompleteOrder: React.FC<IncompleteOrderProps> = ({ tenantId: propTenantId }) => {
+  const { tenantId: paramTenantId } = useParams<{ tenantId: string }>();
+  const tenantId = propTenantId || paramTenantId; // prefer prop, fallback to route
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -38,17 +46,22 @@ const IncompleteOrder = () => {
   // Real data state
   const [orders, setOrders] = useState<Order[]>([]);
 
+  // Modal & selected order for viewing details
+  const [showModal, setShowModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
   useEffect(() => {
     const fetchIncompleteOrders = async () => {
-      if (!tenantId) return;
+      if (!tenantId) {
+        console.warn('[IncompleteOrders] No tenantId provided, skipping fetch');
+        setOrders([]);
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/orders/${tenantId}`);
-        const result = await response.json();
-
-        // Filter for incomplete orders
-        const allOrders = result.data || [];
-        const incomplete = allOrders.filter((o: any) => o.status === 'Incomplete').map((o: any) => ({
+        const data = await OrderService.getOrders(tenantId, { status: 'Incomplete' });
+        const incomplete = data.map((o: any) => ({
           name: o.customer,
           orderId: o.id,
           phone: o.phone,
@@ -58,7 +71,6 @@ const IncompleteOrder = () => {
           total: o.amount,
           image: o.productImage
         }));
-
         setOrders(incomplete);
       } catch (err) {
         console.error('[IncompleteOrders] Failed to fetch:', err);
@@ -78,7 +90,36 @@ const IncompleteOrder = () => {
   }, [orders, searchTerm]);
 
   // Calculate pagination
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage) || 1;
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / itemsPerPage));
+
+  // when search term or base orders change, reset the page
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, orders.length]);
+
+  // Paginated slice of orders
+  const paginatedOrders = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredOrders.slice(start, start + itemsPerPage);
+  }, [filteredOrders, currentPage]);
+
+  async function handleDelete(orderId: string | undefined): Promise<void> {
+    if (!tenantId || !orderId) return;
+    const result = await OrderService.deleteOrder(tenantId, orderId);
+    if (result.success) {
+      setOrders(prev => prev.filter(o => o.orderId !== orderId));
+    } else {
+      console.error('Failed to delete order', result.error);
+    }
+  }
+
+  function prevPage(event: React.MouseEvent<HTMLButtonElement>): void {
+    setCurrentPage(Math.max(1, currentPage - 1));
+  }
+
+  function nextPage(event: React.MouseEvent<HTMLButtonElement>): void {
+    setCurrentPage(Math.min(totalPages, currentPage + 1));
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6 font-sans text-slate-700">
@@ -125,10 +166,18 @@ const IncompleteOrder = () => {
                 />
                 <span>of {totalPages}</span>
                 <div className="flex ml-2 border border-gray-300 rounded overflow-hidden">
-                  <button className="p-1.5 hover:bg-gray-100 disabled:opacity-30">
+                  <button
+                    className="p-1.5 hover:bg-gray-100 disabled:opacity-30"
+                    onClick={prevPage}
+                    disabled={currentPage <= 1}
+                  >
                     <ChevronLeft size={16} />
                   </button>
-                  <button className="p-1.5 hover:bg-gray-100 border-l border-gray-300 disabled:opacity-30">
+                  <button
+                    className="p-1.5 hover:bg-gray-100 border-l border-gray-300 disabled:opacity-30"
+                    onClick={nextPage}
+                    disabled={currentPage >= totalPages}
+                  >
                     <ChevronRight size={16} />
                   </button>
                 </div>
@@ -175,7 +224,7 @@ const IncompleteOrder = () => {
                     </td>
                   </tr>
                 ) : filteredOrders.length > 0 ? (
-                  filteredOrders.map((order, idx) => (
+                  paginatedOrders.map((order, idx) => (
                     <tr key={idx} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors text-sm">
                       <td className="p-4"><input type="checkbox" className="rounded border-gray-300 text-purple-600" /></td>
                       <td className="p-4">
@@ -200,11 +249,20 @@ const IncompleteOrder = () => {
                         </span>
                       </td>
                       <td className="p-4 text-center">{order.points}</td>
-                      <td className="p-4 font-bold text-gray-800">${order.total}</td>
+                      <td className="p-4 font-bold text-gray-800">৳{order.total}</td>
                       <td className="p-4">
                         <div className="flex justify-center gap-2">
-                          <button className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"><Eye size={16} /></button>
-                          <button className="p-1.5 text-red-500 hover:bg-red-50 rounded"><Trash2 size={16} /></button>
+                          <button
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
+                            onClick={() => {
+                              setSelectedOrder(order);
+                              setShowModal(true);
+                            }}
+                          ><Eye size={16} /></button>
+                          <button
+                            className="p-1.5 text-red-500 hover:bg-red-50 rounded"
+                            onClick={() => handleDelete(order.orderId)}
+                          ><Trash2 size={16} /></button>
                         </div>
                       </td>
                     </tr>
@@ -229,6 +287,11 @@ const IncompleteOrder = () => {
           {/* Footer Pagination */}
           <div className="p-4 bg-white border-t border-gray-100 flex justify-end">
             <div className="flex items-center gap-1 text-sm text-gray-500">
+              <button
+                className="px-2 py-1 border border-gray-300 rounded disabled:opacity-30"
+                onClick={prevPage}
+                disabled={currentPage <= 1}
+              >Prev</button>
               <input 
                 type="text" 
                 value={currentPage} 
@@ -236,14 +299,11 @@ const IncompleteOrder = () => {
                 className="w-8 h-8 border border-gray-300 rounded text-center focus:outline-none"
               />
               <span>of {totalPages}</span>
-              <div className="flex ml-2 border border-gray-300 rounded overflow-hidden">
-                <button className="p-1.5 hover:bg-gray-100">
-                  <ChevronLeft size={16} />
-                </button>
-                <button className="p-1.5 hover:bg-gray-100 border-l border-gray-300">
-                  <ChevronRight size={16} />
-                </button>
-              </div>
+              <button
+                className="px-2 py-1 border border-gray-300 rounded disabled:opacity-30"
+                onClick={nextPage}
+                disabled={currentPage >= totalPages}
+              >Next</button>
             </div>
           </div>
         </div>
@@ -255,6 +315,4 @@ const IncompleteOrder = () => {
 // Exporting as the requested name "IncompleteOerder" (as requested, keeping the typo or used as alias)
 export const IncompleteOerder = IncompleteOrder;
 
-export default function App() {
-  return <IncompleteOrder />;
-}
+export default IncompleteOrder;

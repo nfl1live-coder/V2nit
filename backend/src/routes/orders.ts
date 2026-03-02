@@ -97,23 +97,48 @@ const emitOrderUpdate = (req: Request, tenantId: string, event: string, data: un
   }
 };
 
-// Get all orders for a tenant
+// Get all orders for a tenant (with optional filtering and pagination)
 ordersRouter.get('/:tenantId', async (req, res, next) => {
   try {
     const { tenantId } = req.params;
     if (!tenantId) {
       return res.status(400).json({ error: 'tenantId is required' });
     }
-    
-    const orders = await getTenantData<Order[]>(tenantId, 'orders');
-    
+
+    // Optional query parameters
+    const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+    const search = typeof req.query.search === 'string' ? req.query.search.trim().toLowerCase() : undefined;
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined;
+    const perPage = req.query.perPage ? parseInt(req.query.perPage as string, 10) : undefined;
+
+    let orders = (await getTenantData<Order[]>(tenantId, 'orders')) || [];
+
+    // filter by status if requested
+    if (status) {
+      orders = orders.filter(o => o.status === status);
+    }
+
+    // simple text search on customer name or order id
+    if (search) {
+      orders = orders.filter(o =>
+        (o.customer && o.customer.toLowerCase().includes(search)) ||
+        (o.id && o.id.toLowerCase().includes(search))
+      );
+    }
+
+    // apply pagination if requested
+    if (page !== undefined && perPage !== undefined && perPage > 0) {
+      const start = (page - 1) * perPage;
+      orders = orders.slice(start, start + perPage);
+    }
+
     res.set({
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
       'Expires': '0'
     });
-    
-    res.json({ data: orders || [] });
+
+    res.json({ data: orders });
   } catch (error) {
     console.error('[Orders] Error fetching orders:', error);
     next(error);

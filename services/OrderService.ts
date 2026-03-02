@@ -39,6 +39,38 @@ export interface BulkUpdateResult {
 
 export const OrderService = {
   /**
+   * Fetch orders for a tenant with optional query params (status, search, page, perPage)
+   */
+  async getOrders(
+    tenantId: string,
+    options?: { status?: string; search?: string; page?: number; perPage?: number }
+  ): Promise<any[]> {
+    try {
+      const params = new URLSearchParams();
+      if (options?.status) params.set('status', options.status);
+      if (options?.search) params.set('search', options.search);
+      if (options?.page !== undefined) params.set('page', options.page.toString());
+      if (options?.perPage !== undefined) params.set('perPage', options.perPage.toString());
+
+      const url = `${API_BASE_URL}/api/orders/${tenantId}` + (params.toString() ? `?${params.toString()}` : '');
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: getHeaders(tenantId)
+      });
+      if (response.ok) {
+        const body = await response.json();
+        return body.data || [];
+      }
+      const errorText = await response.text();
+      console.error('[OrderService] getOrders failed:', errorText);
+      return [];
+    } catch (error: any) {
+      console.error('[OrderService] getOrders error:', error);
+      return [];
+    }
+  },
+
+  /**
    * Delete a single order
    */
   async deleteOrder(tenantId: string, orderId: string): Promise<DeleteOrderResult> {
