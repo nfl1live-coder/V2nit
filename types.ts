@@ -214,7 +214,7 @@ export interface Order {
   location: string;
   amount: number;
   date: string;
-  status: 'Pending' | 'Confirmed' | 'On Hold' | 'Processing' | 'Shipped' | 'Sent to Courier' | 'Delivered' | 'Cancelled' | 'Return' | 'Refund' | 'Returned Receive';
+  status: 'Pending' | 'Confirmed' | 'On Hold' | 'Processing' | 'Shipped' | 'Sent to Courier' | 'Delivered' | 'Cancelled' | 'Return' | 'Refund' | 'Returned Receive' | 'Incomplete';
   email?: string; // To link with registered user
   trackingId?: string; // Added for Courier Integration
   phone?: string;

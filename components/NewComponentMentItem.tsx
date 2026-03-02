@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { 
   Search, 
   Download, 
@@ -28,13 +29,45 @@ interface Order {
  * Features: Search, Pagination, Empty States, and Responsive Design.
  */
 const IncompleteOrder = () => {
+  const { tenantId } = useParams<{ tenantId: string }>();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock data - set to empty array to demonstrate the "No Data Found" state from your screenshot
-  // You can populate this array to see the table view
+  // Real data state
   const [orders, setOrders] = useState<Order[]>([]);
+
+  useEffect(() => {
+    const fetchIncompleteOrders = async () => {
+      if (!tenantId) return;
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/orders/${tenantId}`);
+        const result = await response.json();
+
+        // Filter for incomplete orders
+        const allOrders = result.data || [];
+        const incomplete = allOrders.filter((o: any) => o.status === 'Incomplete').map((o: any) => ({
+          name: o.customer,
+          orderId: o.id,
+          phone: o.phone,
+          dateTime: o.date ? new Date(o.date).toLocaleString() : 'N/A',
+          paymentType: o.paymentMethod || 'COD',
+          points: 0,
+          total: o.amount,
+          image: o.productImage
+        }));
+
+        setOrders(incomplete);
+      } catch (err) {
+        console.error('[IncompleteOrders] Failed to fetch:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchIncompleteOrders();
+  }, [tenantId]);
 
   // Filtered data based on search
   const filteredOrders = useMemo(() => {
@@ -132,13 +165,28 @@ const IncompleteOrder = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredOrders.length > 0 ? (
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={11} className="py-24 text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                        <p className="mt-4 text-gray-500 font-medium">Loading incomplete orders...</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredOrders.length > 0 ? (
                   filteredOrders.map((order, idx) => (
                     <tr key={idx} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors text-sm">
                       <td className="p-4"><input type="checkbox" className="rounded border-gray-300 text-purple-600" /></td>
                       <td className="p-4">
                         <div className="w-10 h-10 bg-gray-200 rounded-md overflow-hidden">
-                          {/* Placeholder for order image */}
+                          {order.image ? (
+                            <img src={order.image} alt={order.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                              <Search size={16} />
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td className="p-4 font-medium text-purple-700">{order.orderId}</td>

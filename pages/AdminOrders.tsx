@@ -124,10 +124,12 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, courierConfig, onUpda
   }, [orders]);
 
   const metrics = useMemo(() => {
-    const total = orders.length;
-    const revenue = orders.reduce((sum: number, order: Order) => sum + (order.amount || 0), 0);
-    const pending = orders.filter((order: Order) => order.status === 'Pending').length;
-    const fulfilled = orders.filter((order: Order) => order.status === 'Delivered').length;
+    // Exclude incomplete orders from general metrics
+    const validOrders = orders.filter(o => o.status !== 'Incomplete');
+    const total = validOrders.length;
+    const revenue = validOrders.reduce((sum: number, order: Order) => sum + (order.amount || 0), 0);
+    const pending = validOrders.filter((order: Order) => order.status === 'Pending').length;
+    const fulfilled = validOrders.filter((order: Order) => order.status === 'Delivered').length;
     const average = total ? revenue / total : 0;
     return { total, revenue, pending, fulfilled, average };
   }, [orders]);
@@ -135,6 +137,9 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, courierConfig, onUpda
   const filteredOrders = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
     return orders.filter((order: Order) => {
+      // Exclude incomplete orders from the main order list
+      if (order.status === 'Incomplete') return false;
+
       const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
       if (!query) return matchesStatus;
       const haystack = `${order.id} ${order.customer} ${order.location} ${order.phone || ''}`.toLowerCase();
@@ -529,13 +534,16 @@ footer { text-align: center; margin-top: 32px; font-size: 12px; color: #475569; 
   }, [searchTerm, statusFilter]);
 
   // Tab counts
-  const tabCounts = useMemo(() => ({
-    all: orders.length,
-    completed: orders.filter((o: Order) => o.status === 'Delivered').length,
-    pending: orders.filter((o: Order) => o.status === 'Pending').length,
-    cancelled: orders.filter((o: Order) => o.status === 'Cancelled').length,
-    returned: orders.filter((o: Order) => o.status === 'Return' || o.status === 'Returned Receive').length,
-  }), [orders]);
+  const tabCounts = useMemo(() => {
+    const validOrders = orders.filter(o => o.status !== 'Incomplete');
+    return {
+      all: validOrders.length,
+      completed: validOrders.filter((o: Order) => o.status === 'Delivered').length,
+      pending: validOrders.filter((o: Order) => o.status === 'Pending').length,
+      cancelled: validOrders.filter((o: Order) => o.status === 'Cancelled').length,
+      returned: validOrders.filter((o: Order) => o.status === 'Return' || o.status === 'Returned Receive').length,
+    };
+  }, [orders]);
 
   return (
     <div className="min-h-screen bg-gray-50/50 p-4 sm:p-6 lg:p-8 font-sans text-slate-800">

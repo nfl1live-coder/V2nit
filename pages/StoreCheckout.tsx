@@ -141,6 +141,7 @@ const StoreCheckout = ({
   const [alertState, setAlertState] = useState<{ type: 'error' | 'success' | null; message: string }>({ type: null, message: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
+  const [draftOrderId, setDraftOrderId] = useState<string | null>(() => sessionStorage.getItem(`draft_order_${product.id}`));
 
   // Close district dropdown on outside click
   useEffect(() => {
@@ -358,11 +359,63 @@ const StoreCheckout = ({
     setPromoStatus({ type: 'success', message: `Promo code applied! You save ${cs}${discountAmt.toLocaleString()}.` });
   };
 
+  // Auto-save draft as incomplete order
+  useEffect(() => {
+    const shouldSave = formData.fullName.trim().length >= 3 || formData.phone.trim().length >= 5;
+    if (!shouldSave) return;
+
+    const timeoutId = setTimeout(async () => {
+      const id = draftOrderId || `#${Math.floor(100000 + Math.random() * 900000)}`;
+      if (!draftOrderId) {
+        setDraftOrderId(id);
+        sessionStorage.setItem(`draft_order_${product.id}`, id);
+      }
+
+      try {
+        const selectedPayment = paymentMethods?.find(m => m.id === selectedPaymentMethod);
+        const payload = {
+          id,
+          customer: formData.fullName || 'Draft Customer',
+          phone: formData.phone,
+          location: formData.address || (formData.division && formData.district ? `${formData.district}, ${formData.division}` : ''),
+          amount: grandTotal,
+          status: 'Incomplete',
+          email: formData.email,
+          division: formData.division,
+          district: formData.district,
+          productId: product.id,
+          productName: product.name,
+          productImage: product.galleryImages?.[0] || product.image,
+          quantity,
+          variant,
+          deliveryType: selectedDeliveryType,
+          deliveryCharge: computedDeliveryCharge,
+          paymentMethod: selectedPayment?.name || 'Cash On Delivery',
+          paymentMethodId: selectedPaymentMethod,
+          source: 'store'
+        };
+
+        await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/orders/${tenantId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error('[Checkout] Failed to save draft:', err);
+      }
+    }, 2000); // 2 second debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [formData, selectedDeliveryType, selectedPaymentMethod, grandTotal, tenantId, product, quantity, variant, draftOrderId, paymentMethods]);
+
   const handleSubmit = () => {
     if (!validateForm()) {
       setShowConfirmationModal(false);
       return;
     }
+
+    // Clear draft ID on successful submission
+    sessionStorage.removeItem(`draft_order_${product.id}`);
 
     // Find the selected payment method details
     const selectedPayment = paymentMethods?.find(m => m.id === selectedPaymentMethod);
@@ -376,6 +429,7 @@ const StoreCheckout = ({
     
     onConfirmOrder({
       ...formData,
+      id: draftOrderId || undefined,
       amount: grandTotal,
       productName: product.name,
       quantity,

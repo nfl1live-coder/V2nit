@@ -16,7 +16,7 @@ const orderSchema = z.object({
   location: z.string().optional(),
   amount: z.number(),
   date: z.string(),
-  status: z.enum(['Pending', 'Confirmed', 'On Hold', 'Processing', 'Shipped', 'Sent to Courier', 'Delivered', 'Cancelled', 'Return', 'Refund', 'Returned Receive', 'Returned']).default('Pending'),
+  status: z.enum(['Pending', 'Confirmed', 'On Hold', 'Processing', 'Shipped', 'Sent to Courier', 'Delivered', 'Cancelled', 'Return', 'Refund', 'Returned Receive', 'Returned', 'Incomplete']).default('Pending'),
   email: z.preprocess((val) => (val === '' || val === undefined || val === null) ? undefined : val, z.string().email().optional()),
   phone: z.string().optional(),
   division: z.string().optional(),
@@ -59,7 +59,7 @@ export interface Order {
   location: string;
   amount: number;
   date: string;
-  status: 'Pending' | 'Confirmed' | 'On Hold' | 'Processing' | 'Shipped' | 'Sent to Courier' | 'Delivered' | 'Cancelled' | 'Return' | 'Refund' | 'Returned Receive';
+  status: 'Pending' | 'Confirmed' | 'On Hold' | 'Processing' | 'Shipped' | 'Sent to Courier' | 'Delivered' | 'Cancelled' | 'Return' | 'Refund' | 'Returned Receive' | 'Incomplete';
   email?: string;
   trackingId?: string;
   phone?: string;
@@ -138,58 +138,71 @@ ordersRouter.post('/:tenantId', async (req, res, next) => {
     // Get existing orders
     const existingOrders = await getTenantData<Order[]>(tenantId, 'orders') || [];
     
-    // Add new order at the beginning
-    const updatedOrders = [orderData, ...existingOrders];
+    // Check if we should update an existing order (for incomplete/draft orders)
+    const existingIndex = existingOrders.findIndex(o => o.id === orderData.id);
+    let updatedOrders: any[];
+
+    if (existingIndex > -1) {
+      // Update existing order (likely a draft being finalized or updated)
+      updatedOrders = [...existingOrders];
+      updatedOrders[existingIndex] = { ...existingOrders[existingIndex], ...orderData };
+    } else {
+      // Add new order at the beginning
+      updatedOrders = [orderData, ...existingOrders];
+    }
     
     // Save orders
     await setTenantData(tenantId, 'orders', updatedOrders);
     
     // Emit real-time update
-    emitOrderUpdate(req, tenantId, 'new-order', orderData);
+    emitOrderUpdate(req, tenantId, existingIndex > -1 ? 'order-updated' : 'new-order', orderData);
     
-    // Create audit log
-    const user = (req as any).user;
-    await createAuditLog({
-      tenantId,
-      userId: user?._id || user?.id || 'system',
-      userName: user?.name || orderData.customer || 'Customer',
-      userRole: user?.role || 'customer',
-      action: 'Order Created',
-      actionType: 'create',
-      resourceType: 'order',
-      resourceId: orderData.id,
-      resourceName: `Order ${orderData.id}`,
-      details: `New order ${orderData.id} created by ${orderData.customer} for ৳${orderData.amount}`,
-      metadata: { amount: orderData.amount, productName: orderData.productName, source: orderData.source },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
-    
-    // Create notification for admin
-    try {
-      const notification = await Notification.create({
+    // Only create audit logs and notifications for REAL orders (not incomplete drafts)
+    if (orderData.status !== 'Incomplete') {
+      // Create audit log
+      const user = (req as any).user;
+      await createAuditLog({
         tenantId,
-        type: 'order',
-        title: `নতুন অর্ডার ${orderData.id}`,
-        message: `${orderData.customer} থেকে ৳${orderData.amount.toLocaleString()} টাকার অর্ডার এসেছে`,
-        data: {
-          orderId: orderData.id,
-          customerName: orderData.customer,
-          amount: orderData.amount,
-          productName: orderData.productName,
-          phone: orderData.phone
-        }
+        userId: user?._id || user?.id || 'system',
+        userName: user?.name || orderData.customer || 'Customer',
+        userRole: user?.role || 'customer',
+        action: existingIndex > -1 ? 'Order Finalized' : 'Order Created',
+        actionType: existingIndex > -1 ? 'update' : 'create',
+        resourceType: 'order',
+        resourceId: orderData.id,
+        resourceName: `Order ${orderData.id}`,
+        details: `New order ${orderData.id} created by ${orderData.customer} for ৳${orderData.amount}`,
+        metadata: { amount: orderData.amount, productName: orderData.productName, source: orderData.source },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
       });
       
-      // Emit socket event for real-time notification with sound trigger
-      const io = req.app.get('io') as SocketIOServer | undefined;
-      if (io) {
-        io.to(`tenant:${tenantId}`).emit('new-notification', notification);
-        console.log(`[Notification] Sent new order notification to tenant ${tenantId}`);
+      // Create notification for admin
+      try {
+        const notification = await Notification.create({
+          tenantId,
+          type: 'order',
+          title: `নতুন অর্ডার ${orderData.id}`,
+          message: `${orderData.customer} থেকে ৳${orderData.amount.toLocaleString()} টাকার অর্ডার এসেছে`,
+          data: {
+            orderId: orderData.id,
+            customerName: orderData.customer,
+            amount: orderData.amount,
+            productName: orderData.productName,
+            phone: orderData.phone
+          }
+        });
+
+        // Emit socket event for real-time notification with sound trigger
+        const io = req.app.get('io') as SocketIOServer | undefined;
+        if (io) {
+          io.to(`tenant:${tenantId}`).emit('new-notification', notification);
+          console.log(`[Notification] Sent new order notification to tenant ${tenantId}`);
+        }
+      } catch (notifError) {
+        console.warn('[Orders] Failed to create notification:', notifError);
       }
-    } catch (notifError) {
-      console.warn('[Orders] Failed to create notification:', notifError);
     }
     
     console.log(`[Orders] New order ${orderData.id} created for tenant ${tenantId}`);
