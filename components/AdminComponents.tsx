@@ -165,8 +165,13 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 					<div
 						key={item.id}
 						onClick={() => handleNavigate(item.id)}
-						className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'} px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5`}
+						onKeyDown={(e) => e.key === 'Enter' && handleNavigate(item.id)}
+						className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'} px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
 						style={getMenuItemStyle(item.id, isItemActive(item.id))}
+						title={isCollapsed ? item.label : undefined}
+						aria-label={item.label}
+						role="button"
+						tabIndex={0}
 					>
 						{item.icon}
 						{!isCollapsed && <span>{item.label}</span>}
@@ -175,15 +180,19 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 
 				{/* Products with Dropdown */}
 				{canSeeProducts && (
-					<div>
+					<div title={isCollapsed ? t('products') : undefined}>
 						<div
 							onClick={() => setIsProductsOpen(!isProductsOpen)}
-							className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5`}
+							onKeyDown={(e) => e.key === 'Enter' && setIsProductsOpen(!isProductsOpen)}
+							className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
 							style={getMenuItemStyle('products', isProductsOpen || activePage === 'products' || activePage === 'product-upload')}
+							aria-label={t('products')}
+							role="button"
+							tabIndex={0}
 						>
 							<div className="flex items-center gap-2.5">
 								<Box size={18} />
-								{!isCollapsed && <span>Products</span>}
+								{!isCollapsed && <span>{t('products')}</span>}
 							</div>
 							<ChevronDown size={16} className={`transition-transform duration-200 ${isProductsOpen ? 'rotate-180' : ''} ${isCollapsed ? 'hidden' : ''}`} />
 						</div>
@@ -211,15 +220,19 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 
 				{/* Catalog with Dropdown */}
 				{canSeeCatalog && (
-					<div>
+					<div title={isCollapsed ? t('catalog') : undefined}>
 						<div
 							onClick={() => setIsCatalogOpen(!isCatalogOpen)}
-							className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5`}
+							onKeyDown={(e) => e.key === 'Enter' && setIsCatalogOpen(!isCatalogOpen)}
+							className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
 							style={getMenuItemStyle('catalog', activePage?.startsWith('catalog_') || false)}
+							aria-label={t('catalog')}
+							role="button"
+							tabIndex={0}
 						>
 							<div className="flex items-center gap-2.5">
 								<Layers size={18} />
-								{!isCollapsed && <span>Catalog</span>}
+								{!isCollapsed && <span>{t('catalog')}</span>}
 							</div>
 							<ChevronDown size={16} className={`transition-transform duration-200 ${isCatalogOpen ? 'rotate-180' : ''} ${isCollapsed ? 'hidden' : ''}`} />
 						</div>
@@ -254,11 +267,16 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 							<div
 								key={item.id}
 								onClick={() => handleNavigate(item.id)}
-								className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'} px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5`}
+								onKeyDown={(e) => e.key === 'Enter' && handleNavigate(item.id)}
+								className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'} px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
 								style={getMenuItemStyle(item.id, isItemActive(item.id))}
+								title={isCollapsed ? item.label : undefined}
+								aria-label={item.label}
+								role="button"
+								tabIndex={0}
 							>
 								{item.icon}
-								<span className="flex-1">{item.label}</span>{(item as any).isNew && <span className="ml-auto px-1.5 py-0.5 text-[10px] font-bold bg-purple-500 text-white rounded-full">NEW</span>}
+								{!isCollapsed && <span className="flex-1">{item.label}</span>}{(item as any).isNew && !isCollapsed && <span className="ml-auto px-1.5 py-0.5 text-[10px] font-bold bg-purple-500 text-white rounded-full">NEW</span>}
 							</div>
 						))}
 					</>
@@ -273,8 +291,13 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 							<div
 								key={item.id}
 								onClick={() => handleNavigate(item.id)}
-								className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'} px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5`}
+								onKeyDown={(e) => e.key === 'Enter' && handleNavigate(item.id)}
+								className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'} px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
 								style={getMenuItemStyle(item.id, isItemActive(item.id))}
+								title={isCollapsed ? item.label : undefined}
+								aria-label={item.label}
+								role="button"
+								tabIndex={0}
 							>
 								{item.icon}
 								{!isCollapsed && <span>{item.label}</span>}
@@ -342,6 +365,7 @@ export const AdminHeader: React.FC<{
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isTenantMenuOpen, setIsTenantMenuOpen] = useState(false);
 	const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+	const searchInputRef = useRef<HTMLInputElement>(null);
 	const tenantMenuRef = useRef<HTMLDivElement | null>(null);
 	const notificationRef = useRef<HTMLDivElement | null>(null);
 	const prevUnreadCountRef = useRef<number>(-1); // Start with -1 to skip initial load
@@ -538,6 +562,18 @@ export const AdminHeader: React.FC<{
 		}
 	};
 
+	// Add keyboard shortcut for search
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+				e.preventDefault();
+				searchInputRef.current?.focus();
+			}
+		};
+		window.addEventListener('keydown', handleKeyDown);
+		return () => window.removeEventListener('keydown', handleKeyDown);
+	}, []);
+
 	const renderTenantSummary = () => (
 		<div className="text-left">
 			<p className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Tenant</p>
@@ -570,13 +606,18 @@ export const AdminHeader: React.FC<{
 				</button>
 
 				{/* Global Search Bar */}
-				<div className="hidden md:flex items-center relative max-w-md w-full">
-					<Search className="absolute left-4 text-gray-400" size={18} />
+				<div className="hidden md:flex items-center relative max-w-md w-full group">
+					<Search className="absolute left-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
 					<input
+						ref={searchInputRef}
 						type="text"
-						placeholder="Search for orders, products, customers..."
-						className="w-full pl-12 pr-4 py-2.5 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-blue-500/20 transition-all outline-none"
+						placeholder="Search (Press '/' to focus)"
+						className="w-full pl-12 pr-12 py-2.5 bg-gray-50 border border-transparent rounded-2xl text-sm focus:bg-white focus:border-blue-100 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+						aria-keyshortcuts="/"
 					/>
+					<div className="absolute right-4 px-1.5 py-0.5 bg-gray-200/50 text-gray-500 rounded text-[10px] font-mono pointer-events-none group-focus-within:hidden">
+						/
+					</div>
 				</div>
 
 				{/* Tenant Switcher - Desktop */}
@@ -695,7 +736,7 @@ export const AdminHeader: React.FC<{
 						>
 							<Bell size={18} className="md:w-5 md:h-5" />
 							{unreadCount > 0 && (
-								<span className="absolute -to p-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold rounded-full px-1 bg-red-500 text-white border-2 border-white">
+								<span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold rounded-full px-1 bg-red-500 text-white border-2 border-white">
 									{unreadCount > 99 ? '99+' : unreadCount}
 								</span>
 							)}
