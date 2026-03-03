@@ -118,6 +118,8 @@ const StoreCheckout = ({
   const [districtSearch, setDistrictSearch] = useState('');
   const [isDistrictOpen, setIsDistrictOpen] = useState(false);
   const districtRef = React.useRef<HTMLDivElement>(null);
+  const [divisionSearch, setDivisionSearch] = useState('');
+  const [isOpen, setIsDivisionOpen] = useState(false);
   const [selectedDeliveryType, setSelectedDeliveryType] = useState<'Regular' | 'Express' | 'Free'>('Regular');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('cod-default');
   const [paymentInfoSaved, setPaymentInfoSaved] = useState(false);
@@ -665,33 +667,58 @@ const StoreCheckout = ({
                     )}
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2.5">Division/Region <span className="text-rose-500">*</span></label>
-                      <div className="relative group">
-                        <MapPin className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-200 ${formErrors.division && touchedFields.division ? 'text-rose-400' : 'text-gray-400 group-focus-within:text-emerald-500'}`} size={18} />
-                        <select
-                          className={`w-full pl-12 pr-10 py-3.5 border-2 rounded-2xl transition-all duration-200 focus:outline-none appearance-none cursor-pointer ${formErrors.division && touchedFields.division
-                              ? 'border-rose-300 bg-rose-50/50 focus:border-rose-400 focus:ring-4 focus:ring-rose-100'
-                              : 'border-gray-200 bg-white hover:border-gray-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50'
+                      <div className="relative group" ref={districtRef}>
+                        <MapPin className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-200 z-10 ${formErrors.division && touchedFields.division ? 'text-rose-400' : 'text-gray-400 group-focus-within:text-emerald-500'}`} size={18} />
+                        <div
+                          className={`w-full pl-12 pr-10 py-3.5 border-2 rounded-2xl transition-all duration-200 cursor-pointer flex items-center justify-between ${formErrors.division && touchedFields.division
+                              ? 'border-rose-300 bg-rose-50/50'
+                              : 'border-gray-200 bg-white hover:border-gray-300'
                             } text-gray-800`}
-                          value={formData.division}
-                          onChange={e => {
-                            updateField('division', e.target.value);
-                            setFormData(prev => ({ ...prev, district: '' }));
-                            setDistrictSearch('');
-                            setFormErrors(prev => ({ ...prev, district: '' }));
-                          }}
-                          aria-invalid={!!(formErrors.division && touchedFields.division)}
-                          aria-describedby={formErrors.division && touchedFields.division ? 'division-error' : undefined}
+                          onClick={() => setIsDivisionOpen(!isOpen)}
                         >
-                          <option value="">Select Division</option>
-                          <option value="Dhaka">Dhaka</option>
-                          <option value="Chittagong">Chittagong</option>
-                          <option value="Sylhet">Sylhet</option>
-                          <option value="Khulna">Khulna</option>
-                          <option value="Rajshahi">Rajshahi</option>
-                          <option value="Barisal">Barisal</option>
-                          <option value="Rangpur">Rangpur</option>
-                          <option value="Mymensingh">Mymensingh</option>
-                        </select>
+                          <span className={formData.division ? 'text-gray-800' : 'text-gray-400'}>
+                            {formData.division || 'Select Division'}
+                          </span>
+                          <ChevronDown size={16} className={`text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                        </div>
+                        {isOpen && (
+                          <div className="absolute z-50 mt-1 w-full bg-white border-2 border-gray-200 rounded-2xl shadow-xl max-h-60 overflow-hidden">
+                            <div className="sticky top-0 bg-white p-2 border-b border-gray-100">
+                              <div className="relative">
+                                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <input
+                                  type="text"
+                                  placeholder="Search division..."
+                                  className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500"
+                                  value={divisionSearch}
+                                  onChange={e => setDivisionSearch(e.target.value)}
+                                  onClick={e => e.stopPropagation()}
+                                  autoFocus
+                                />
+                              </div>
+                            </div>
+                            <div className="overflow-y-auto max-h-48">
+                              {["Dhaka", "Chittagong", "Sylhet", "Khulna", "Rajshahi", "Barisal", "Rangpur", "Mymensingh"].filter(d => d.toLowerCase().includes(divisionSearch.toLowerCase())).map(d => (
+                                <div
+                                  key={d}
+                                  className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-emerald-50 transition-colors ${formData.division === d ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-gray-700'}`}
+                                  onClick={() => {
+                                    updateField('division', d);
+                                    setIsDivisionOpen(false);
+                                    setDivisionSearch('');
+                                    setFormData(prev => ({ ...prev, district: '' }));
+                                    setFormErrors(prev => ({ ...prev, district: '' }));
+                                  }}
+                                >
+                                  {d}
+                                </div>
+                              ))}
+                              {["Dhaka", "Chittagong", "Sylhet", "Khulna", "Rajshahi", "Barisal", "Rangpur", "Mymensingh"].filter(d => d.toLowerCase().includes(divisionSearch.toLowerCase())).length === 0 && (
+                                <div className="px-4 py-3 text-sm text-gray-400 text-center">No division found</div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                       {formErrors.division && touchedFields.division && (
                         <p id="division-error" className="mt-1.5 text-xs text-rose-600 font-medium flex items-center gap-1">

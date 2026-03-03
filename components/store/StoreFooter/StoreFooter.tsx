@@ -196,27 +196,22 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
               <h3 className="text-2xl font-bold text-white">{websiteConfig?.websiteName || 'Logo'}</h3>
             )}
             <p className="text-[13px] font-inter text-white leading-[1.7] mt-1">
-              we create possibilities
-              <br />
-              for the connected
-              <br />
-              world.
+              {websiteConfig?.brandingText || 'we create possibilities for the connected world.'}
             </p>
           </div>
 
           <div className="flex flex-row gap-20">
 
             {/* VISIT */}
-            {/* <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3">
               <h4 className="text-[16px] font-semibold text-[#7DB541] uppercase tracking-wider">
                 VISIT
               </h4>
               <p className="text-[12px] text-white leading-[1.8] font-medium">
-                D-14/3, Bankcolony,
+                {websiteConfig?.addresses || 'D-14/3, Bankcolony,'}
                 <br />
-                Savar, Dhaka-1340
               </p>
-            </div> */}
+            </div>
 
             {/* QUICK LINK */}
             <div className="flex flex-col gap-[20px]">
@@ -237,13 +232,13 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
             {/* USEFUL LINK */}
             <div className="flex flex-col gap-[20px]">
               <h4 className="text-[16px] font-semibold text-[#7DB541] uppercase tracking-wider">
-                USEFUL LINK
+                SOCIAL LINK
               </h4>
               <ul className="flex flex-col gap-2">
-                {["Facebook", "Instagram", "Twitter"].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-[12px] text-white leading-[1.8] font-medium">
-                      {item}
+                {websiteConfig?.socialLinks?.slice(0, 5).map((social, idx) => (
+                  <li key={idx}>
+                    <a href={String(social?.url || '#')} target="_blank" rel="noopener noreferrer" className="text-[12px] text-white leading-[1.8] font-medium">
+                      {String(social?.platform || '').charAt(0).toUpperCase() + String(social?.platform || '').slice(1)}
                     </a>
                   </li>
                 ))}
