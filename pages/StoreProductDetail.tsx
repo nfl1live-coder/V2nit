@@ -14,7 +14,7 @@ const getTrackPageView = () => import('../hooks/useVisitorStats').then(m => m.tr
 
 // Skeleton loaders removed for faster initial render
 
-import { Heart, Star, ShoppingCart, ShoppingBag, Smartphone, Watch, BatteryCharging, Headphones, Zap, Bluetooth, Gamepad2, Camera, ArrowLeft, Share2, AlertCircle, ZoomIn, X, ChevronLeft, ChevronRight, Grid, Home, Shirt, Baby, Gift, Laptop, Tv, Cable, Package, Sparkles, Tag, Layers } from 'lucide-react';
+import { Heart, Star, ShoppingCart, ShoppingBag, Smartphone, Watch, BatteryCharging, Headphones, Zap, Bluetooth, Gamepad2, Camera, ArrowLeft, Share2, AlertCircle, ZoomIn, X, ChevronLeft, ChevronRight, Grid, Home, Shirt, Baby, Gift, Laptop, Tv, Cable, Package, Sparkles, Tag, Layers, Play } from 'lucide-react';
 import { formatCurrency } from '../utils/format';
 import { LazyImage } from '../utils/performanceOptimization';
 import { normalizeImageUrl } from '../utils/imageUrlHelper';
@@ -656,434 +656,252 @@ const StoreProductDetail = ({
         </div>
       )}
 
-      <main className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 pt-2">
+      <main className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4">
         <div className="flex flex-col lg:flex-row gap-4">
 
           {/* Main Content: Product Details */}
           <div className="flex-1">
             {/* Product Hero Block */}
-            <div className="glass-card mobile-product-card p-4 md:p-6 flex flex-col md:flex-row gap-4 animate-slide-up"
+
+<div className="bg-white/80 backdrop-blur-xl rounded-[32px] p-6 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col md:flex-row gap-10 animate-slide-up selection:bg-theme-primary/10 selection:text-theme-primary">
+
+  {/* --- Image Section: Enhanced Boutique Gallery --- */}
+  <div className="w-full md:w-1/2 flex flex-col gap-6">
+    <div className="relative group/main">
+      {showVideo && youtubeVideoId ? (
+        <div className="aspect-square bg-slate-950 rounded-[24px] overflow-hidden relative shadow-2xl border border-slate-200">
+          <iframe
+            width="100%"
+            height="100%"
+            src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&mute=1&rel=0`}
+            title="Product Video"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full"
+          />
+        </div>
+      ) : (
+        <div className="flex gap-4 mb-4">
+          {/* Main Image Container */}
+          <div className="flex-1 min-w-0">
+            <div
+              className="aspect-square bg-white rounded-[24px] overflow-hidden relative border border-slate-100 cursor-zoom-in group shadow-sm transition-all duration-500 hover:shadow-xl"
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                setZoomPosition({ x, y });
+              }}
+              onClick={() => setIsZoomOpen(true)}
             >
+              <LazyImage
+                src={selectedImage}
+                alt={product.name}
+                className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+              />
 
-              {/* Image Section - Enhanced Gallery */}
-              <div className="w-full md:w-1/2 flex flex-col gap-4">
-                {/* Main Product Image with Zoom OR Video */}
-                <div className="relative">
-                  {showVideo && youtubeVideoId ? (
-                    /* Video Player - completely separate from zoom container */
-                    <div className="mobile-image-gallery aspect-square bg-black rounded-2xl overflow-hidden relative border border-gray-200">
-                      <iframe
-                        width="100%"
-                        height="100%"
-                        src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&mute=1&rel=0`}
-                        title="Product Video"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="absolute inset-0 w-full h-full"
-                      />
-                    </div>
-                  ) : (
-                    /* Image with Zoom */
-                    <div
-                      className="mobile-image-gallery aspect-square bg-white rounded-2xl overflow-hidden relative group border border-gray-200 cursor-crosshair"
-                      onMouseEnter={() => setIsHovering(true)}
-                      onMouseLeave={() => setIsHovering(false)}
-                      onMouseMove={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const x = ((e.clientX - rect.left) / rect.width) * 100;
-                        const y = ((e.clientY - rect.top) / rect.height) * 100;
-                        setZoomPosition({ x, y });
-                      }}
-                      onClick={() => setIsZoomOpen(true)}
-                    >
-                      <LazyImage
-                        src={selectedImage}
-                        alt={product.name}
-                        className="w-full h-full object-contain"
-                      />
-
-                    {/* Hover Zoom Lens Effect */}
-                    {isHovering && (
-                      <div
-                        className="absolute w-32 h-32 border-2 border-theme-primary rounded-lg pointer-events-none bg-white/20 backdrop-blur-[1px] shadow-lg hidden md:block"
-                        style={{
-                          left: `calc(${zoomPosition.x}% - 64px)`,
-                          top: `calc(${zoomPosition.y}% - 64px)`,
-                          backgroundImage: `url(${selectedImage})`,
-                          backgroundSize: '400%',
-                          backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                        }}
-                      />
-                    )}
-
-                    {/* Discount Badge */}
-                    {product.discount && (
-                      <span className="absolute to p-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-md shadow-md">
-                        {product.discount}
-                      </span>
-                    )}
-
-                    {/* Wishlist Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleWishlist();
-                      }}
-                      className={`absolute to p-4 right-4 p-2.5 rounded-full transition-all ${isWishlisted
-                        ? 'bg-rose-100 text-rose-500 shadow-md'
-                        : 'bg-white text-gray-400 shadow hover:text-rose-500 hover:bg-rose-50'
-                        }`}
-                      aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-                    >
-                      <Heart size={22} fill={isWishlisted ? "currentColor" : "none"} strokeWidth={1.5} />
-                    </button>
-
-                    {/* Navigation Arrows */}
-                    {galleryImages.length > 1 && (
-                      <>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                          className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-gray-900 transition opacity-0 group-hover:opacity-100"
-                          aria-label="Previous image"
-                        >
-                          <ChevronLeft size={24} />
-                        </button>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-gray-900 transition opacity-0 group-hover:opacity-100"
-                          aria-label="Next image"
-                        >
-                          <ChevronRight size={24} />
-                        </button>
-                      </>
-                    )}
-
-                    {/* Zoom Hint & Download Button */}
-                    <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {websiteConfig?.allowProductImageDownloads && (
-                        <a
-                          href={selectedImage}
-                          download={`${product.name || 'product'}-image.jpg`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="bg-white/90 backdrop-blur-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-full text-xs font-medium shadow flex items-center gap-1.5 transition-colors"
-                          aria-label="Download image"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                          Download
-                        </a>
-                      )}
-                      <div className="bg-white/90 backdrop-blur-sm text-gray-600 px-3 py-1.5 rounded-full text-xs font-medium shadow flex items-center gap-1.5">
-                        <ZoomIn size={14} />
-                        Click to zoom
-                      </div>
-                    </div>
-                  </div>
-                  )}
-
-                  {/* Zoomed Preview Panel (Desktop Only) */}
-                  {isHovering && (
-                    <div className="hidden md:block absolute left-[calc(100%+16px)] top-0 w-[400px] h-[400px] bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden z-50">
-                      <div
-                        className="w-full h-full"
-                        style={{
-                          backgroundImage: `url(${selectedImage})`,
-                          backgroundSize: '200%',
-                          backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                          backgroundRepeat: 'no-repeat',
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Thumbnail Gallery - Bottom with Arrows */}
-                <div className="relative">
-                  {/* Left Arrow */}
-                  {galleryImages.length > 5 && (
-                    <button
-                      onClick={() => scrollThumbnails('left')}
-                      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition"
-                      aria-label="Scroll thumbnails left"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-                  )}
-
-                  {/* Thumbnails Container */}
-                  <div
-                    ref={thumbnailScrollRef}
-                    className="flex gap-2 overflow-x-auto scrollbar-hide px-1 py-1"
-                    style={{ scrollBehavior: 'smooth' }}
-                  >
-                    {/* Video Thumbnail if available - FIRST POSITION */}
-                    {youtubeVideoId && (
-                      <button
-                        onClick={() => {
-                          setShowVideo(true);
-                          setSelectedImageIndex(-1);
-                        }}
-                        className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 p-1 transition-all overflow-hidden transform hover:scale-105 relative ${showVideo
-                            ? 'border-theme-primary shadow-md'
-                            : 'border-gray-200 hover:border-theme-primary/70'
-                          }`}
-                        aria-label="Play product video"
-                      >
-                        <img 
-                          src={`https://img.youtube.com/vi/${youtubeVideoId}/mqdefault.jpg`}
-                          alt="Video thumbnail" 
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                          <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z"/>
-                          </svg>
-                        </div>
-                      </button>
-                    )}
-                    {additionalImages.map((img, idx) => (
-                      <button
-                        key={idx}
-                        onMouseEnter={() => handleThumbnailSelect(img, idx)}
-                        onClick={() => handleThumbnailSelect(img, idx)}
-                        className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 p-1 transition-all overflow-hidden transform hover:scale-105 ${selectedImageIndex === idx
-                            ? 'border-theme-primary shadow-md'
-                          : 'border-gray-200 hover:border-theme-primary/70'
-                          }`}
-                        aria-label={`View image ${idx + 1}`}
-                        aria-pressed={selectedImageIndex === idx}
-                      >
-                        <LazyImage src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Right Arrow */}
-                  {galleryImages.length > 5 && (
-                    <button
-                      onClick={() => scrollThumbnails('right')}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition"
-                      aria-label="Scroll thumbnails right"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Info Section */}
-              <div className="w-full md:w-1/2 flex flex-col">
-                <h1 className="text-2xl font-bold text-gray-800 mb-2">{product.name}</h1>
-
-                <div className="mb-4">
-                  <StarRating rating={product.rating || 0} count={product.reviews} />
-                </div>
-
-                <div className="flex items-end gap-3 mb-6">
-                  <span className="text-4xl font-bold text-theme-primary">৳ {formattedPrice}</span>
-                  {formattedOriginalPrice && (
-                    <span className="text-lg text-gray-400 line-through mb-1">৳ {formattedOriginalPrice}</span>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                  <button
-                    type="button"
-                    onClick={handleShareLink}
-                    className="inline-flex items-center gap-2 rounded-full bg-[#0064d1] hover:bg-[#0055b2] text-white text-sm font-semibold px-4 py-2 shadow-sm"
-                  >
-                    <Share2 size={16} /> Share
-                  </button>
-                  <span className="text-xs text-gray-500 break-all">
-
+              {/* Enhanced Badges */}
+              <div className="absolute top-5 left-5 flex flex-col gap-2">
+                {product.discount && (
+                  <span className="bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg tracking-widest uppercase">
+                    {product.discount} OFF
                   </span>
-                </div>
-
-                <div className="space-y-5 mb-6">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700 mb-2">Quantity</p>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center border border-theme-primary/30 rounded-lg">
-                        <button
-                          onClick={decreaseQuantity}
-                          className="px-4 py-2 text-theme-primary hover:bg-theme-primary/10 font-bold transition"
-                        >-</button>
-                        <span className="px-4 py-2 font-bold text-gray-700 w-12 text-center">{quantity}</span>
-                        <button
-                          onClick={increaseQuantity}
-                          className={`px-4 py-2 font-bold transition ${atStockLimit ? 'text-gray-400 cursor-not-allowed' : 'text-theme-primary hover:bg-theme-primary/10'}`}
-                          disabled={atStockLimit}
-                        >+</button>
-                      </div>
-                      {Number.isFinite(availableStock) && (
-                        <span className={`text-xs font-medium ${isOutOfStock ? 'text-red-500' : 'text-gray-500'}`}>
-                          {isOutOfStock ? 'Out of stock' : `${availableStock} pcs available`}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    {showColorSelector ? (
-                      <div>
-                        <label className="block text-sm font-bold text-gray-800 mb-3">
-                          Color
-                          <span className="text-xs font-normal text-gray-500 ml-2">
-                            {selectedColor}
-                          </span>
-                        </label>
-                        <div className="flex flex-wrap gap-2 md:gap-3">
-                          {colorOptions.map(color => (
-                            <button
-                              key={color}
-                              onClick={() => setSelectedColor(color)}
-                              aria-pressed={selectedColor === color}
-                              className={`mobile-variant-option mobile-touch-feedback ${selectedColor === color ? 'selected' : ''
-                                }`}
-                            >
-                              {color}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">Color: {fallbackColor}</p>
-                    )}
-
-                    {showSizeSelector ? (
-                      <div>
-                        <label className="block text-sm font-bold text-gray-800 mb-3">
-                          Size
-                          <span className="text-xs font-normal text-gray-500 ml-2">
-                            {selectedSize}
-                          </span>
-                        </label>
-                        <div className="flex flex-wrap gap-2 md:gap-3">
-                          {sizeOptions.map(size => (
-                            <button
-                              key={size}
-                              onClick={() => setSelectedSize(size)}
-                              aria-pressed={selectedSize === size}
-                              className={`mobile-variant-option mobile-touch-feedback ${selectedSize === size ? 'selected' : ''
-                                }`}
-                            >
-                              {size}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-lg">Size: {fallbackSize}</p>
-                    )}
-                    
-                    {/* Enhanced Variant Groups with Images */}
-                    {hasVariantGroups && product.variantGroups?.map((group) => (
-                      <div key={group.title}>
-                        <label className="block text-sm font-bold text-gray-800 mb-3">
-                          {group.title}
-                          {group.isMandatory && <span className="text-red-500 ml-1">*</span>}
-                          <span className="text-xs font-normal text-gray-500 ml-2">
-                            {selectedVariantOptions[group.title]?.attribute || ''}
-                            {(selectedVariantOptions[group.title]?.extraPrice || 0) > 0 && (
-                              <span className="text-theme-primary ml-1">
-                                (+৳{selectedVariantOptions[group.title]?.extraPrice})
-                              </span>
-                            )}
-                          </span>
-                        </label>
-                        <div className="flex flex-wrap gap-2 md:gap-3">
-                          {group.options.map((option, idx) => {
-                            const isSelected = selectedVariantOptions[group.title]?.attribute === option.attribute;
-                            return option.image ? (
-                              // Image-based variant option
-                              <button
-                                key={idx}
-                                onClick={() => handleVariantOptionSelect(group.title, option)}
-                                aria-pressed={isSelected}
-                                className={`relative w-14 h-14 md:w-16 md:h-16 rounded-lg border-2 overflow-hidden transition-all transform hover:scale-105 ${
-                                  isSelected 
-                                    ? 'border-theme-primary ring-2 ring-theme-primary/30 shadow-md' 
-                                    : 'border-gray-200 hover:border-theme-primary/70'
-                                }`}
-                                title={`${option.attribute}${option.extraPrice > 0 ? ` (+৳${option.extraPrice})` : ''}`}
-                              >
-                                <img 
-                                  src={normalizeImageUrl(option.image)} 
-                                  alt={option.attribute} 
-                                  className="w-full h-full object-cover"
-                                />
-                                {isSelected && (
-                                  <div className="absolute inset-0 bg-theme-primary/10 flex items-center justify-center">
-                                    <div className="w-5 h-5 bg-theme-primary rounded-full flex items-center justify-center">
-                                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                      </svg>
-                                    </div>
-                                  </div>
-                                )}
-                              </button>
-                            ) : (
-                              // Text-based variant option
-                              <button
-                                key={idx}
-                                onClick={() => handleVariantOptionSelect(group.title, option)}
-                                aria-pressed={isSelected}
-                                className={`mobile-variant-option mobile-touch-feedback ${isSelected ? 'selected' : ''}`}
-                              >
-                                {option.attribute}
-                                {option.extraPrice > 0 && (
-                                  <span className="text-xs text-theme-primary ml-1">(+৳{option.extraPrice})</span>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {variantError && (
-                    <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-start gap-2">
-                      <AlertCircle size={18} className="mt-0.5 flex-shrink-0" />
-                      <span>{variantError}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Desktop Buttons */}
-                <div className="hidden md:flex gap-3 mb-4">
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={isOutOfStock}
-                    className={`flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition transform active:scale-95 ${isOutOfStock ? 'bg-gray-300 cursor-not-allowed text-gray-500' : 'btn-order'}`}
-                  >
-                    <ShoppingCart size={20} /> Add to cart
-                  </button>
-                  <button
-                    onClick={handleBuyNow}
-                    disabled={isOutOfStock}
-                    className={`flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition transform active:scale-95 ${isOutOfStock ? 'bg-gray-300 cursor-not-allowed text-gray-500' : 'btn-order'}`}
-                  >
-                    <ShoppingBag size={20} /> Buy Now
-                  </button>
-                </div>
-
-                <div className="text-xs text-gray-500 mb-4">
-                  Selected: <span className="font-semibold text-gray-700">{currentVariant.color} / {currentVariant.size}</span>
-                </div>
-
-                <div className="space-y-2 text-sm text-gray-600 border-t border-gray-100 pt-4 mt-auto">
-                  <p><span className="font-semibold text-gray-800 w-24 inline-block">Category:</span> <span className="text-theme-primary">{product.category || 'Electronics'}</span></p>
-                  {Array.isArray(product.tags) && product.tags.length > 0 && (
-                    <p><span className="font-semibold text-gray-800 w-24 inline-block">Tags:</span> {product.tags.join(", ")}</p>
-                           )}
-                    {product.sku && <p><span className="font-semibold text-gray-800 w-24 inline-block">SKU:</span> {product.sku}</p>}
-                    {product.serial ? <p><span className="font-semibold text-gray-800 w-24 inline-block">Serial:</span> #{product.serial}</p> : null}
-                    {product.warranty && <p><span className="font-semibold text-gray-800 w-24 inline-block">Warranty:</span> {product.warranty}</p>}
-                    {(product.initialSoldCount || product.soldCount) ? <p><span className="font-semibold text-gray-800 w-24 inline-block">Sold:</span> {(product.initialSoldCount || 0) + (product.soldCount || 0)}+ sold</p> : null}
-                </div>
+                )}
               </div>
+
+              {/* Wishlist Icon */}
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleWishlist(); }}
+                className={`absolute top-5 right-5 p-3 rounded-full transition-all duration-300 transform active:scale-75 shadow-lg ${
+                  isWishlisted ? 'bg-rose-500 text-white' : 'bg-white text-slate-400 hover:text-rose-500 hover:bg-rose-50'
+                }`}
+              >
+                <Heart size={20} fill={isWishlisted ? "currentColor" : "none"} strokeWidth={2} />
+              </button>
+
+              {/* Main Gallery Arrows */}
+              {galleryImages.length > 1 && (
+                <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <button onClick={(e) => { e.stopPropagation(); handlePrevImage(); }} className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-slate-900 hover:bg-white transition-all transform active:scale-90">
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); handleNextImage(); }} className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-slate-900 hover:bg-white transition-all transform active:scale-90">
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              )}
             </div>
+          </div>
+
+          {/* Zoom Preview - Right Side */}
+          {isHovering && (
+            <div className="hidden lg:block w-48 h-auto">
+              <div 
+                className="bg-slate-100 rounded-[24px] aspect-square overflow-hidden border-2 border-slate-300 shadow-xl"
+                style={{
+                  backgroundImage: `url(${selectedImage})`,
+                  backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                  backgroundSize: '250%',
+                  backgroundRepeat: 'no-repeat'
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+
+    {/* Enhanced Thumbnail Gallery */}
+    <div className="relative px-2">
+      <div
+        ref={thumbnailScrollRef}
+        className="flex gap-3 overflow-x-auto scrollbar-hide py-2 scroll-smooth"
+      >
+        {youtubeVideoId && (
+          <button
+            onClick={() => { setShowVideo(true); setSelectedImageIndex(-1); }}
+            className={`flex-shrink-0 w-20 h-20 rounded-xl border-2 transition-all overflow-hidden relative group/vid ${
+              showVideo ? 'border-theme-primary ring-4 ring-theme-primary/10 shadow-lg' : 'border-slate-100 hover:border-theme-primary/40'
+            }`}
+          >
+            <img src={`https://img.youtube.com/vi/${youtubeVideoId}/mqdefault.jpg`} alt="Video" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 group-hover/vid:bg-slate-900/20 transition-all">
+              <div className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-theme-primary shadow-sm"><Play size={16} fill="currentColor" /></div>
+            </div>
+          </button>
+        )}
+        {additionalImages.map((img, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleThumbnailSelect(img, idx)}
+            onMouseEnter={() => handleThumbnailSelect(img, idx)}
+            className={`flex-shrink-0 w-20 h-20 rounded-xl border-2 transition-all overflow-hidden group/thumb ${
+              selectedImageIndex === idx ? 'border-theme-primary ring-4 ring-theme-primary/10 shadow-lg' : 'border-slate-100 hover:border-theme-primary/40'
+            }`}
+          >
+            <LazyImage src={img} alt="Thumb" className="w-full h-full object-contain transition-transform duration-500 group-hover/thumb:scale-110" />
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  {/* --- Info Section: Clean & Structured Typography --- */}
+  <div className="w-full md:w-1/2 flex flex-col">
+    <div className="mb-6 space-y-3">
+      <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-tight">{product.name}</h1>
+      <div className="flex items-center gap-4">
+        <StarRating rating={product.rating || 0} count={product.reviews} />
+        <div className="h-4 w-px bg-slate-200" />
+        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{product.sku}</span>
+      </div>
+    </div>
+
+    <div className="flex items-baseline gap-4 mb-8">
+      <span className="text-4xl font-black text-slate-900">৳ {formattedPrice}</span>
+      {formattedOriginalPrice && (
+        <span className="text-xl text-slate-300 line-through font-medium">৳ {formattedOriginalPrice}</span>
+      )}
+    </div>
+
+    {/* Share Button Section */}
+    <div className="mb-10 flex items-center gap-4">
+      <button
+        type="button"
+        onClick={handleShareLink}
+        className="inline-flex items-center gap-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black uppercase tracking-widest px-6 py-3 transition-all active:scale-95"
+      >
+        <Share2 size={16} strokeWidth={2.5} /> Share Product
+      </button>
+    </div>
+
+    <div className="space-y-8 mb-10">
+      {/* Quantity Selector */}
+      <div>
+        <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Select Quantity</p>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center bg-slate-50 border border-slate-200 rounded-2xl p-1">
+            <button onClick={decreaseQuantity} className="w-10 h-10 flex items-center justify-center text-slate-900 font-bold hover:bg-white hover:shadow-sm rounded-xl transition-all">-</button>
+            <span className="w-12 text-center font-black text-slate-900">{quantity}</span>
+            <button onClick={increaseQuantity} disabled={atStockLimit} className={`w-10 h-10 flex items-center justify-center font-bold rounded-xl transition-all ${atStockLimit ? 'text-slate-300' : 'text-slate-900 hover:bg-white hover:shadow-sm'}`}>+</button>
+          </div>
+          {Number.isFinite(availableStock) && (
+            <span className={`text-xs font-bold uppercase tracking-tight ${isOutOfStock ? 'text-red-500' : 'text-slate-400'}`}>
+              {isOutOfStock ? 'Sold Out' : `${availableStock} Pieces Remaining`}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Variant Selectors: Modern Pill Buttons */}
+      <div className="space-y-6">
+        {showColorSelector && (
+          <div>
+            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Color: <span className="text-slate-900 ml-1">{selectedColor}</span></label>
+            <div className="flex flex-wrap gap-3">
+              {colorOptions.map(color => (
+                <button key={color} onClick={() => setSelectedColor(color)} className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all border-2 ${selectedColor === color ? 'bg-slate-900 text-white border-slate-900 shadow-xl' : 'bg-white text-slate-600 border-slate-100 hover:border-slate-300'}`}>{color}</button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {showSizeSelector && (
+          <div>
+            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Size: <span className="text-slate-900 ml-1">{selectedSize}</span></label>
+            <div className="flex flex-wrap gap-3">
+              {sizeOptions.map(size => (
+                <button key={size} onClick={() => setSelectedSize(size)} className={`min-w-[50px] h-12 flex items-center justify-center rounded-xl text-xs font-bold transition-all border-2 ${selectedSize === size ? 'bg-slate-900 text-white border-slate-900 shadow-xl' : 'bg-white text-slate-600 border-slate-100 hover:border-slate-300'}`}>{size}</button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+
+    {/* Primary Action Buttons */}
+    <div className="flex flex-col sm:flex-row gap-4 mb-8">
+      <button
+        onClick={handleAddToCart}
+        disabled={isOutOfStock}
+        className={`flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all transform active:scale-95 ${isOutOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-2xl shadow-slate-200'}`}
+      >
+        <ShoppingCart size={18} strokeWidth={2.5} /> Add to Cart
+      </button>
+      <button
+        onClick={handleBuyNow}
+        disabled={isOutOfStock}
+        className={`flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all transform active:scale-95 ${isOutOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-theme-primary text-white hover:brightness-110 shadow-2xl shadow-theme-primary/20'}`}
+      >
+        <Zap size={18} strokeWidth={2.5} fill="currentColor" /> Buy It Now
+      </button>
+    </div>
+
+    {/* Product Meta Data: Elegant List */}
+    <div className="grid grid-cols-2 gap-y-4 pt-8 border-t border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+      <div className="flex flex-col gap-1">
+        <span className="text-[10px] text-slate-300 tracking-[0.2em]">Category</span>
+        <span className="text-slate-900">{product.category || 'Lifestyle'}</span>
+      </div>
+      <div className="flex flex-col gap-1">
+        <span className="text-[10px] text-slate-300 tracking-[0.2em]">Warranty</span>
+        <span className="text-slate-900">{product.warranty || 'No Warranty'}</span>
+      </div>
+      <div className="flex flex-col gap-1">
+        <span className="text-[10px] text-slate-300 tracking-[0.2em]">Shipping</span>
+        <span className="text-green-600">Free Delivery</span>
+      </div>
+      <div className="flex flex-col gap-1">
+        <span className="text-[10px] text-slate-300 tracking-[0.2em]">Popularity</span>
+        <span className="text-slate-900">{(product.initialSoldCount || 0) + (product.soldCount || 0)}+ Sold</span>
+      </div>
+    </div>
+  </div>
+</div>
+              
 
             {/* Tabs Section */}
             <div className="mt-2 glass-card rounded-xl overflow-hidden animate-slide-up">
@@ -1144,70 +962,147 @@ const StoreProductDetail = ({
           <aside className="w-full lg:w-80 space-y-4">
 
             {/* Related Products Widget */}
-            <div className="glass-card rounded-xl p-5 animate-slide-up">
-              <h3 className="font-bold text-lg text-gray-800 mb-4 pb-2 border-b border-gray-100">Related Products</h3>
-              <div className="space-y-4">
-                {isLoading ? (
-                  [...Array(3)].map((_, i) => <div key={`skeleton-${i}`} className="h-20 bg-gray-100 rounded animate-pulse" />)
-                ) : (
-                  relatedProducts.map(({ product: related, matchType, reason, stockCount }) => (
-                    <div
-                      key={related.id}
-                      onClick={() => onProductClick(related)}
-                      className="flex gap-3 group cursor-pointer"
-                    >
-                      <div className="w-16 h-16 bg-gray-50 rounded border border-gray-100 overflow-hidden flex-shrink-0">
-                        <LazyImage src={normalizeImageUrl(related.image)} alt={related.name} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="text-sm font-medium text-gray-800 line-clamp-2 group-hover:text-theme-primary transition">
-                            {related.name}
-                          </h4>
-                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${MATCH_BADGE[matchType].className}`}>
-                            {MATCH_BADGE[matchType].label}
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{reason}</p>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="text-theme-primary font-bold text-sm">৳ {formatCurrency(related.price)}</span>
-                          <div className="text-[11px] text-gray-500">
-                            {stockCount > 0 ? `${stockCount} in stock` : 'Restocking soon'}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
+            <div className="bg-white/80 backdrop-blur-xl rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 animate-slide-up transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
+  {/* হেডার সেকশন - Minimalist Luxury Style */}
+  <div className="flex items-center justify-between mb-6">
+    <h3 className="font-black text-[11px] uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
+      <span className="w-1.5 h-1.5 rounded-full bg-theme-primary"></span>
+      Related Products
+    </h3>
+    <div className="h-[1px] flex-1 bg-slate-100 ml-4"></div>
+  </div>
+
+  <div className="space-y-5">
+    {isLoading ? (
+      [...Array(3)].map((_, i) => (
+        <div key={`skeleton-${i}`} className="flex gap-4 animate-pulse">
+          <div className="w-20 h-20 bg-slate-100 rounded-2xl" />
+          <div className="flex-1 space-y-2 py-1">
+            <div className="h-3 bg-slate-100 rounded w-3/4" />
+            <div className="h-3 bg-slate-100 rounded w-1/2" />
+            <div className="h-3 bg-slate-100 rounded w-1/4 mt-4" />
+          </div>
+        </div>
+      ))
+    ) : (
+      relatedProducts.map(({ product: related, matchType, reason, stockCount }) => (
+        <div
+          key={related.id}
+          onClick={() => onProductClick(related)}
+          className="group relative flex gap-4 p-2 -m-2 rounded-[20px] transition-all duration-300 cursor-pointer hover:bg-slate-50 active:scale-[0.98]"
+        >
+          {/* ইমেজ কন্টেইনার - Enhanced Shadow on Hover */}
+          <div className="relative w-20 h-20 bg-white rounded-2xl border border-slate-100 overflow-hidden flex-shrink-0 group-hover:shadow-lg group-hover:shadow-black/5 transition-all duration-500">
+            <LazyImage 
+              src={normalizeImageUrl(related.image)} 
+              alt={related.name} 
+              className="w-full h-full object-contain p-2 transform group-hover:scale-110 transition-transform duration-700" 
+            />
+          </div>
+
+          {/* কন্টেন্ট এরিয়া */}
+          <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+            <div>
+              <div className="flex items-start justify-between gap-2 mb-1">
+                <h4 className="text-[13px] font-bold text-slate-800 line-clamp-2 leading-snug group-hover:text-theme-primary transition-colors duration-300">
+                  {related.name}
+                </h4>
+                {/* ম্যাচ ব্যাজ - More Refined Design */}
+                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-lg whitespace-nowrap shadow-sm border border-black/5 ${MATCH_BADGE[matchType].className}`}>
+                  {MATCH_BADGE[matchType].label}
+                </span>
               </div>
+              
+              {/* Reason Text */}
+              <p className="text-[11px] text-slate-400 line-clamp-1 italic group-hover:text-slate-500 transition-colors">
+                {reason}
+              </p>
             </div>
 
+            {/* প্রাইজ এবং স্টক ইনফো */}
+            <div className="flex items-center justify-between mt-2">
+              <span className="text-slate-900 font-extrabold text-[14px]">
+                ৳ {formatCurrency(related.price)}
+              </span>
+              
+              {/* স্টক ইন্ডিকেটর */}
+              <div className="flex items-center gap-1.5">
+                <div className={`w-1 h-1 rounded-full ${stockCount > 0 ? 'bg-green-500' : 'bg-amber-500'}`}></div>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                  {stockCount > 0 ? `${stockCount} In Stock` : 'Restocking'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* হোভার অ্যারো - Subtle interaction */}
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+            <div className="p-1 rounded-full bg-white shadow-md text-theme-primary">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      ))
+    )}
+  </div>
+</div>
+
             {/* Category Widget */}
-            <div className="store-card rounded-xl p-5 shadow-lg border border-gray-200">
-              <h3 className="font-bold text-lg text-gray-800 mb-4 pb-2 border-b border-gray-100">Category</h3>
-              <div className="space-y-2">
-                {(categories && categories.length > 0 ? categories.filter(c => c.status === 'Active').slice(0, 6) : []).map((cat, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => onCategoryClick?.(cat.name)}
-                    className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition cursor-pointer group"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden border border-gray-100 group-hover:border-theme-primary/30 transition">
-                      {cat.image || (cat.icon && cat.icon.startsWith('http')) ? (
-                        <img
-                          src={normalizeImageUrl(cat.image || cat.icon || '')}
-                          alt={cat.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-gray-400 group-hover:text-theme-primary transition">
-                          {getCategoryIcon(cat.name, cat.icon)}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900">{cat.name}</span>
-                  </div>
-                ))}
+            <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500">
+  {/* হেডার সেকশন */}
+  <div className="flex items-center justify-between mb-6">
+    <h3 className="font-black text-[11px] uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
+      <span className="w-1.5 h-1.5 rounded-full bg-theme-primary animate-pulse"></span>
+      Categories
+    </h3>
+    <div className="h-[1px] flex-1 bg-slate-100 ml-4"></div>
+  </div>
+
+  <div className="space-y-1.5">
+    {(categories && categories.length > 0 
+      ? categories.filter(c => c.status === 'Active').slice(0, 6) 
+      : []
+    ).map((cat, idx) => (
+      <div
+        key={idx}
+        onClick={() => onCategoryClick?.(cat.name)}
+        className="group relative flex items-center gap-4 p-3 rounded-[16px] hover:bg-theme-primary/5 transition-all duration-300 cursor-pointer overflow-hidden active:scale-[0.98]"
+      >
+        {/* একটি সূক্ষ্ম লেফট বর্ডার ইন্ডিকেটর যা হোভারে দেখা যাবে */}
+        <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-theme-primary rounded-r-full -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+
+        {/* আইকন/ইমেজ কন্টেইনার */}
+        <div className="relative w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:bg-white group-hover:border-theme-primary/20 group-hover:shadow-lg group-hover:shadow-theme-primary/10">
+          {cat.image || (cat.icon && cat.icon.startsWith('http')) ? (
+            <img
+              src={normalizeImageUrl(cat.image || cat.icon || '')}
+              alt={cat.name}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+          ) : (
+            <span className="text-slate-400 group-hover:text-theme-primary transition-colors duration-300 transform group-hover:scale-110">
+              {getCategoryIcon(cat.name, cat.icon)}
+            </span>
+          )}
+        </div>
+
+        {/* টেক্সট কন্টেন্ট */}
+        <div className="flex flex-col flex-1">
+          <span className="text-[13px] font-bold text-slate-600 group-hover:text-slate-900 transition-colors">
+            {cat.name}
+          </span>
+        </div>
+
+        {/* অ্যারো ইন্ডিকেটর যা হোভারে স্লাইড করবে */}
+        <div className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300 text-theme-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </div>
+      </div>
+    ))}
               </div>
             </div>
 

@@ -256,56 +256,167 @@ const FooterStyle2: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
   const currentYear = new Date().getFullYear();
   const quickLinks = getFooterQuickLinks(websiteConfig);
 
-  return (
+    return (
     <>
-      <footer className="bg-white border-t border-gray-200 mt-auto store-footer-minheight">
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-20 object-contain mb-4" /> : <h3 className="text-xl font-bold text-gray-900 mb-4">{websiteConfig?.websiteName || 'Store'}</h3>}
-              <p className="text-gray-600 text-sm mb-4 max-w-md">{websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Quality products at great prices.'}</p>
-              <div className="flex gap-3">
-                {websiteConfig?.socialLinks?.slice(0, 4).map((social, idx) => (
-                  <a key={idx} href={social.url || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-gray-100 hover:bg-theme-primary hover:text-white flex items-center justify-center text-gray-600 transition-all" aria-label={social.platform}>{resolveSocialIcon(social.platform)}</a>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-4">Links</h4>
-              <ul className="space-y-2">
-                {quickLinks.map((link, idx) => (
-                  <li key={link.id || idx}><a href={link.url} className="text-gray-600 hover:text-theme-primary text-sm transition-colors">{link.label}</a></li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-4">Contact</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                {websiteConfig?.emails?.[0] && <li>{websiteConfig.emails[0]}</li>}
-                {websiteConfig?.phones?.[0] && <li>{websiteConfig.phones[0]}</li>}
-                {websiteConfig?.addresses?.[0] && <li>{websiteConfig.addresses[0]}</li>}
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-gray-100">
-          <div className="max-w-6xl mx-auto px-4 py-4">
-            {!websiteConfig?.hideCopyright && (
-              <div className="flex flex-col items-center gap-2">
-                {!websiteConfig?.hideCopyrightText && (
-                  <p className="text-center text-sm text-gray-500">© {currentYear} {websiteConfig?.websiteName || 'Store'}. All rights reserved.</p>
+      <footer className="bg-[#0f1115] text-gray-300 pt-20 pb-10 font-sans selection:bg-theme-primary/30 selection:text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
+            
+            {/* Column 1: Brand Identity (Spans 4) */}
+            <div className="lg:col-span-4 space-y-8">
+              <div className="inline-block">
+                {resolvedFooterLogo ? (
+                  <img 
+                    src={typeof normalizeImageUrl === 'function' ? normalizeImageUrl(resolvedFooterLogo) : String(resolvedFooterLogo)} 
+                    alt={websiteConfig?.websiteName || 'Logo'} 
+                    className="h-12 w-auto object-contain brightness-0 invert transition-transform hover:scale-105 duration-300" 
+                  />
+                ) : (
+                  <h3 className="text-2xl font-black text-white tracking-tighter uppercase italic">
+                    {websiteConfig?.websiteName || 'Our Store'}
+                  </h3>
                 )}
-                {websiteConfig?.showPoweredBy && (
-                  <a href="https://systemnextit.com" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-blue-500 transition-colors flex items-center gap-1">
-                    Powered by <span className="font-semibold">System Next IT</span><ExternalLink size={10} />
+              </div>
+              
+              <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+                {String(websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Elevating your lifestyle with curated premium products. We focus on quality, sustainability, and exceptional customer service.')}
+              </p>
+
+              {/* Social Icons with Glowing Hover */}
+              <div className="flex gap-4">
+                {websiteConfig?.socialLinks?.slice(0, 5).map((social, idx) => (
+                  <a 
+                    key={idx} 
+                    href={String(social?.url || '#')} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-theme-primary hover:border-theme-primary hover:shadow-[0_0_15px_rgba(var(--theme-primary-rgb),0.5)] transition-all duration-300 transform hover:-translate-y-1" 
+                    aria-label={String(social?.platform || 'social')}
+                  >
+                    {typeof resolveSocialIcon === 'function' ? resolveSocialIcon(social?.platform) : null}
                   </a>
-                )}
+                ))}
               </div>
-            )}
+            </div>
+
+            {/* Column 2: Quick Links (Spans 2) */}
+            <div className="lg:col-span-2">
+              <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-8 relative inline-block">
+                Navigation
+                <span className="absolute -bottom-2 left-0 w-8 h-1 bg-theme-primary rounded-full"></span>
+              </h4>
+              <ul className="space-y-4">
+                {quickLinks.map((link, idx) => (
+                  <li key={link?.id || idx}>
+                    <a 
+                      href={String(link?.url || '#')} 
+                      className="group flex items-center text-sm hover:text-white transition-colors duration-200"
+                    >
+                      <ArrowRight size={12} className="mr-0 opacity-0 -ml-4 group-hover:mr-2 group-hover:opacity-100 transition-all duration-300 text-theme-primary" />
+                      {String(link?.label || '')}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Column 3: Contact Details (Spans 3) */}
+            <div className="lg:col-span-3">
+              <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-8 relative inline-block">
+                Get In Touch
+                <span className="absolute -bottom-2 left-0 w-8 h-1 bg-theme-primary rounded-full"></span>
+              </h4>
+              <ul className="space-y-6">
+                {websiteConfig?.emails?.[0] && (
+                  <li className="flex items-start gap-4">
+                    <div className="mt-1 p-2 rounded-lg bg-white/5 text-theme-primary"><Mail size={16} /></div>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Email Us</p>
+                      <p className="text-sm text-gray-300 break-all">{String(websiteConfig.emails[0])}</p>
+                    </div>
+                  </li>
+                )}
+                {websiteConfig?.phones?.[0] && (
+                  <li className="flex items-start gap-4">
+                    <div className="mt-1 p-2 rounded-lg bg-white/5 text-theme-primary"><Phone size={16} /></div>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Call Support</p>
+                      <p className="text-sm text-gray-300">{String(websiteConfig.phones[0])}</p>
+                    </div>
+                  </li>
+                )}
+                {websiteConfig?.addresses?.[0] && (
+                  <li className="flex items-start gap-4">
+                    <div className="mt-1 p-2 rounded-lg bg-white/5 text-theme-primary"><MapPin size={16} /></div>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Our Location</p>
+                      <p className="text-sm text-gray-300 leading-relaxed">{String(websiteConfig.addresses[0])}</p>
+                    </div>
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            {/* Column 4: Newsletter/Promo (Spans 3) */}
+            <div className="lg:col-span-3 bg-white/5 p-6 rounded-2xl border border-white/10 self-start">
+              <h4 className="text-white font-bold text-sm mb-4">Stay Updated</h4>
+              <p className="text-xs text-gray-400 mb-6 leading-relaxed">Subscribe to receive updates, access to exclusive deals, and more.</p>
+              <div className="flex flex-col gap-2">
+                <input 
+                  type="email" 
+                  placeholder="Your email address" 
+                  className="bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-theme-primary/50 transition-all text-white placeholder:text-gray-600"
+                />
+                <button className="bg-theme-primary hover:bg-theme-primary/90 text-white font-bold py-3 rounded-xl text-xs transition-all active:scale-95 shadow-lg shadow-theme-primary/20">
+                  Subscribe Now
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom Divider */}
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8"></div>
+
+          {/* Footer Bottom */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-center md:text-left">
+              {!websiteConfig?.hideCopyrightText && (
+                <p className="text-xs text-gray-500 font-medium">
+                  © {currentYear} <span className="text-gray-300 font-bold">{websiteConfig?.websiteName || 'Our Store'}</span>. Crafted for excellence.
+                </p>
+              )}
+              {websiteConfig?.showPoweredBy && (
+                <a 
+                  href="https://systemnextit.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-1.5 text-[10px] text-gray-600 hover:text-blue-400 transition-all mt-2 group"
+                >
+                  Project by <span className="font-bold group-hover:underline">System Next IT</span>
+                  <ExternalLink size={10} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </a>
+              )}
+            </div>
+
+            {/* Payment & Security Badges */}
+            <div className="flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity duration-500 cursor-default">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 text-[10px] font-bold tracking-tighter">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                SECURE CHECKOUT
+              </div>
+              <div className="flex gap-2">
+                 {[1,2,3].map(i => <div key={i} className="w-8 h-5 bg-white/10 rounded sm:w-10 sm:h-6"></div>)}
+              </div>
+            </div>
           </div>
         </div>
       </footer>
-      <FloatingChatButton websiteConfig={websiteConfig} onOpenChat={onOpenChat} />
+      {typeof FloatingChatButton === 'function' ? (
+        <FloatingChatButton websiteConfig={websiteConfig} onOpenChat={onOpenChat} />
+      ) : FloatingChatButton}
     </>
   );
 };

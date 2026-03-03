@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Heart, Star, ChevronLeft, ChevronRight, Eye, Zap, Package } from 'lucide-react';
+import { ShoppingCart, Heart, Star, ChevronLeft, ChevronRight, Eye, Zap, Package, Share2 } from 'lucide-react';
 import { Product, CarouselItem, WebsiteConfig } from '../types';
 import { LazyImage } from '../utils/performanceOptimization';
 import { normalizeImageUrl } from '../utils/imageUrlHelper';
@@ -14,6 +14,7 @@ interface ProductCardProps {
   wishlist?: number[];
   onToggleWishlist?: (productId: number) => void;
   showSoldCount?: boolean; // Add this line!
+  discount?: 'percentage' | 'amount'; // Add this line!
 }
 
 const getImage = (p: Product) => normalizeImageUrl(p.galleryImages?.[0] || p.image);
@@ -65,31 +66,147 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
   const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart?.(product); };
   const handleWishlist = (e: React.MouseEvent) => { e.stopPropagation(); onToggleWishlist?.(product.id); };
   const discountPercent = product.originalPrice && product.price ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : null;
+  const price = product.price || 0;
+  const originalPrice = product.originalPrice || 0;
+// Note: This style emphasizes a clean look with interactive hover actions for quick view and add to cart, while keeping the product information concise and focused.
+return (
+    <div 
+      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full"
+      style={{ contain: 'layout' }}
+      onMouseEnter={() => setIsHovered?.(true)}
+      onMouseLeave={() => setIsHovered?.(false)}
+    >
+      {/* ইমেজ সেকশন */}
+      <div 
+        className="relative bg-[#f8f8f8] rounded-xl m-2 mb-0 overflow-hidden group-hover:opacity-95 transition-opacity" 
+        style={{ aspectRatio: '1/1' }} 
+        onClick={() => onClick?.(product)}
+      >
+        {/* Discount Badge */}
+        {discountPercent && discountPercent > 0 && (
+          <div className="absolute top-2 right-2 z-10 bg-[#FF3C3C] text-white text-[10px] md:text-sm lg:text-base font-bold px-2 py-1 rounded-lg shadow-sm">
+            -{discountPercent}%
+          </div>
+        )}
+         <button
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            handleWishlist(e);
+          }}
+          className="absolute top-0 left-0 z-10 w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center cursor-pointer bg-white/80 backdrop-blur-sm rounded-full transition-transform active:scale-90"
+        >
+          <Heart 
+            fill={isWishlisted ? "#E72960" : "transparent"} 
+            color="#E72960" 
+            className="w-4 h-4 lg:h-6 lg:w-6 transition-colors" 
+          />
+        </button>
 
-  return (
-    <div className="group bg-white rounded-lg overflow-hidden flex flex-col relative border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300" style={{ contain: 'layout' }} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-      {/* <div className="absolute to p-2 left-2 z-10 flex flex-col gap-1">
-        {(product.discount || discountPercent) && <span className="bg-gradient-to-r from-rose-500 to-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">{product.discount || `-${discountPercent}%`}</span>}
-      </div> */}
-      {/* <button onClick={handleWishlist} className="absolute to p-2 right-2 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-sm flex items-center justify-center hover:scale-110 transition-all"><Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} className={isWishlisted ? 'text-rose-500' : 'text-gray-400 group-hover:text-rose-500'} /></button> */}
-      <div className="relative cursor-pointer bg-gray-50 overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
-        <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-110 transition-transform duration-300" width={300} height={300} />
-        <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-3 flex justify-center gap-3 transition-all duration-300 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <button onClick={(e) => { e.stopPropagation(); onClick(product); }} className="w-9 h-9 bg-white rounded-full shadow-md flex items-center justify-center hover:scale-110 transition-all"><Eye size={16} className="text-gray-700" /></button>
-          <button onClick={handleCart} className="w-9 h-9 bg-white rounded-full shadow-md flex items-center justify-center hover:scale-110 transition-all"><ShoppingCart size={16} className="text-gray-700" /></button>
+
+        {/* <img 
+          // src={getImage(product)} 
+          alt={product?.name || 'Product'} 
+          className="w-full h-full object-contain p-4 transform group-hover/img:scale-110 transition-transform duration-700 ease-in-out" 
+          loading="lazy"
+        /> */}
+
+        <div className="w-full aspect-[5/5] flex items-center justify-center p-4">
+          <img 
+            src={getImage(product)}
+          alt={product?.name || 'Product'} 
+            className="max-w-full max-h-full object-contain"
+            
+          loading="lazy"
+          />
+        </div>
+
+     
+
+        {/* হোভার অ্যাকশন বাটন (Quick View) */}
+        {/* <div className={`absolute inset-0 bg-black/5 backdrop-blur-[2px] flex items-center justify-center transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+          <button 
+            onClick={(e) => { e.stopPropagation(); onClick?.(product); }} 
+            className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center hover:bg-theme-primary hover:text-white transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 text-gray-700"
+            title="Quick View"
+          >
+            <Eye size={20} />
+          </button>
+        </div> */}
+      </div>
+
+      {/* কন্টেন্ট সেকশন */}
+      <div className="px-3 pt-3 pb-4 flex flex-col flex-grow">
+        {/* রেটিং */}
+        <div className="mb-2">
+            <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+ <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 13 13" fill="none">
+                  <path d="M6.04449 0.207218C6.13429 -0.0691755 6.52532 -0.0691763 6.61512 0.207217L7.90372 4.17312C7.94388 4.29673 8.05907 4.38042 8.18904 4.38042H12.359C12.6497 4.38042 12.7705 4.7523 12.5354 4.92312L9.16177 7.37419C9.05663 7.45058 9.01263 7.58599 9.05279 7.7096L10.3414 11.6755C10.4312 11.9519 10.1149 12.1817 9.87974 12.0109L6.50614 9.55985C6.40099 9.48346 6.25862 9.48346 6.15347 9.55985L2.77987 12.0109C2.54475 12.1817 2.22841 11.9519 2.31821 11.6755L3.60682 7.7096C3.64698 7.58599 3.60298 7.45058 3.49783 7.37419L0.124234 4.92312C-0.11088 4.7523 0.00995171 4.38042 0.300569 4.38042H4.47057C4.60054 4.38042 4.71572 4.29673 4.75589 4.17312L6.04449 0.207218Z" fill="#15A4EC" />
+                </svg>
+              </span>
+              <h4 className="text-[#1AA5EB] font-medium text-xs lg:text-base">
+                {product.rating} <span className="text-[#727272]">({product.reviews})</span>
+              </h4>
+            </div>
+              <div className="h-3 w-[1px] bg-[#E72960]/30" />
+                  <div>
+              <h4 className="text-[#727272] text-xs lg:text-base">{product.sold} Sold</h4>
+            </div>
+          </div>
+        </div>
+        {/* প্রোডাক্ট নাম */}
+        <h3 
+          className="text-black text-sm lg:text-xl font-bold truncate mb-2 group-hover:text-[#15A4EC] transition-colors" 
+          onClick={() => onClick?.(product)}
+        >
+          {String(product?.name || 'Unknown Product')}
+        </h3>
+
+        {/* প্রাইজ সেকশন */}
+        <div className="mt-auto space-y-3">
+          <div className="flex flex-wrap items-baseline gap-2">
+          <span className="text-[#2F3485] font-bold text-lg lg:text-2xl">
+            ৳{Number(price).toLocaleString()}
+          </span>
+          {originalPrice > 0 && originalPrice !== price && (
+            <span className="text-[#666] text-xs lg:text-base line-through opacity-70">
+              ৳{Number(originalPrice).toLocaleString()}
+            </span>
+          )}
+        
+        <div className="w-full">
+               <span className="text-[#15A4EC] text-[10px] lg:text-sm font-semibold bg-[#15A4EC]/10 px-2 py-0.5 rounded-full">
+                Get {product.coins} Coins
+              </span>
+         </div>
+        </div>
+        {/* অ্যাকশন বাটন গ্রুপ */}
+       <div className="flex flex-col gap-2">
+        <div className="flex gap-2">         
+           {/* Add to Cart Button */}
+          <button 
+            className="flex-1 px-3 py-2 flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-b from-[#FF9D1B] to-[#FF6C01] text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110"
+            onClick={(e) => { e.stopPropagation(); handleCart?.(e); }}
+            title="Add to Cart"
+          >
+            <ShoppingCart className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+          </button>
+
+          {/* Buy Now Button */}
+          <button 
+            className="flex-1 px-3 py-2 rounded-lg bg-gradient-to-r from-[#38BDF8] to-[#1E90FF] text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110" 
+            onClick={(e) => { e.stopPropagation(); handleBuyNow?.(); }}
+          >
+            <span>Buy Now</span>
+           
+          </button>
+          </div>
         </div>
       </div>
-      <div className="px-3 pb-3 pt-2 flex-1 flex flex-col" style={{ minHeight: '100px' }}>
-        {product.rating !== undefined && product.rating > 0 && <div className="flex items-center gap-1 mb-1">{[1, 2, 3, 4, 5].map((s) => <Star key={s} size={10} className={s <= Math.round(product.rating || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />)}</div>}
-        <h3 className="font-medium text-gray-800 text-xs leading-tight mb-1.5 line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors" onClick={() => onClick(product)} style={{ minHeight: '32px' }}>{product.name}</h3>
-        <div className="flex items-baseline gap-1.5 mb-2">
-          <span className="text-base font-bold text-theme-primary">৳{product.price?.toLocaleString()}</span>
-          {product.originalPrice && <span className="text-[10px] text-gray-400 line-through">৳{product.originalPrice?.toLocaleString()}</span>}
-        </div>
-        <button className="w-full py-2 bg-gradient-theme-r text-white text-xs font-semibold rounded-lg hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all mt-auto" onClick={handleBuyNow}>Buy Now</button>
-      </div>
+     </div> 
     </div>
-  );
+)
 };
 
 // Style 3: Elegant - Rounded corners with soft shadows and elegant typography

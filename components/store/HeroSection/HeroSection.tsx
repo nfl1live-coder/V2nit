@@ -157,9 +157,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ carouselItems, website
                         rel="preload"
                         as="image"
                         href={lcpImageUrl}
-                        imagesrcset={preloadSrcSet || undefined}
-                        imagesizes={preloadSrcSet ? '(max-width: 768px) 100vw, 1400px' : undefined}
-                        fetchpriority="high"
+                        imageSrcSet={preloadSrcSet || undefined}
+                        imageSizes={preloadSrcSet ? '(max-width: 768px) 100vw, 1200px' : undefined}
+                        fetchPriority="high"
                     />
                 )}
             </Helmet>

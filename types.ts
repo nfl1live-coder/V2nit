@@ -117,6 +117,7 @@ interface Variant {
 }
 
 export interface Product {
+  coins: ReactNode;
   sold: ReactNode;
   // sold: import("react/jsx-runtime").JSX.Element;
   title: string;

@@ -401,43 +401,81 @@ const CategoryStyle6 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
     const scheme = cat.colorScheme;
 
     return (
-      <button
-        key={`${cat.name}-${index}`}
-        onClick={() => onCategoryClick(cat.slug || cat.name)}
-        className={`relative overflow-hidden rounded-[25px] h-[280px] sm:h-[350px] flex-shrink-0 transition-transform duration-300 hover:scale-[1.01] text-left
-          ${isLarge ? 'w-full lg:flex-[2]' : 'w-full lg:flex-1'}`}
-        style={{ backgroundColor: scheme.bgColor, fontFamily: "'Montserrat', sans-serif" }}
-      >
-        {hasImage && (
-          <div className="absolute z-10 pointer-events-none bottom-0 right-2 sm:right-5 w-[55%] sm:w-[60%] max-w-[380px]">
-            <img
-              src={normalizeImageUrl(iconSrc)}
-              alt={cat.name}
-              className="w-full h-auto object-contain drop-shadow-2xl"
-              loading="lazy"
-            />
-          </div>
-        )}
-        <div className="relative z-20 p-5 sm:p-8 h-full flex flex-col">
-          <h3 className="font-medium text-sm sm:text-lg mb-1" style={{ color: scheme.textColor }}>
+    <button
+      key={`${cat.name}-${index}`}
+      onClick={() => onCategoryClick(cat.slug || cat.name)}
+      className={`group relative overflow-hidden rounded-[32px] h-[300px] sm:h-[400px] flex-shrink-0 transition-all duration-500 ease-out text-left border border-black/5 hover:shadow-2xl hover:shadow-black/10
+        ${isLarge ? 'w-full lg:flex-[2]' : 'w-full lg:flex-1'}`}
+      style={{ 
+        backgroundColor: scheme.bgColor, 
+        fontFamily: "'Montserrat', sans-serif" 
+      }}
+    >
+      {/* Background Subtle Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+
+      {/* Product Image Section */}
+      {hasImage && (
+        <div className="absolute z-10 pointer-events-none bottom-0 right-[-5%] sm:right-0 w-[65%] sm:w-[60%] max-w-[420px] transition-all duration-700 ease-in-out group-hover:scale-110 group-hover:-rotate-2 group-hover:translate-x-2">
+          <img
+            src={normalizeImageUrl(iconSrc)}
+            alt={cat.name}
+            className="w-full h-auto object-contain filter drop-shadow-[0_20px_30px_rgba(0,0,0,0.15)] group-hover:drop-shadow-[0_30px_50px_rgba(0,0,0,0.25)]"
+            loading="lazy"
+          />
+        </div>
+      )}
+
+      {/* Content Section */}
+      <div className="relative z-20 p-6 sm:p-10 h-full flex flex-col justify-between">
+        <div className="space-y-1 sm:space-y-2">
+          {/* Top Label */}
+          <h3 
+            className="font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] opacity-80" 
+            style={{ color: scheme.textColor }}
+          >
             {cat.name}
           </h3>
-          <p className="font-extrabold text-3xl sm:text-5xl md:text-6xl tracking-tight leading-[1.1] mb-4 sm:mb-6 uppercase"
-            style={{ color: scheme.titleColor }}>
+          
+          {/* Hero Title */}
+          <p 
+            className="font-black text-4xl sm:text-5xl md:text-7xl tracking-tighter leading-[0.9] uppercase transition-transform duration-500 group-hover:translate-x-1"
+            style={{ color: scheme.titleColor }}
+          >
             {cat.name}
           </p>
-          {cat.hasButton && (
-            <span
-              className="mt-auto w-fit flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-md text-white font-semibold text-xs transition-opacity hover:opacity-90 shadow-lg"
+        </div>
+
+        {/* Action Button */}
+        {cat.hasButton && (
+          <div className="flex flex-col gap-4">
+             {/* Decorative Line */}
+             <div className="w-12 h-1 bg-current opacity-20 rounded-full" style={{ color: scheme.buttonColor }}></div>
+             
+             <span
+              className="w-fit flex items-center gap-3 px-6 sm:px-8 py-3 sm:py-4 rounded-full text-white font-black text-[11px] sm:text-xs tracking-widest transition-all duration-300 hover:brightness-110 shadow-xl active:scale-95 group/btn"
               style={{ backgroundColor: scheme.buttonColor }}
             >
               SHOP NOW
-              <ArrowRight size={14} />
+              <ArrowRight 
+                size={16} 
+                className="transition-transform duration-300 group-hover/btn:translate-x-2" 
+              />
             </span>
-          )}
-        </div>
-      </button>
-    );
+          </div>
+        )}
+      </div>
+
+      {/* Glossy Reflection Effect */}
+      <div className="absolute top-0 -inset-full h-full w-1/2 z-30 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes shimmer {
+          100% { left: 150%; }
+        }
+      `}} />
+    </button>
+  );
   };
 
   return (

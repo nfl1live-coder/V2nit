@@ -516,6 +516,7 @@ export function useNavigation({ products, user, landingPages, setSelectedLanding
     if (path === 'admin/login') return;
     if (path === 'register') return;
     if (path === 'visual-search' || path === 'search') return;
+    if (path === 'amit') return ;
     
     // Don't reset URL on tenant login portal
     if (isTenantLoginPortal) return;

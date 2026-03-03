@@ -11,6 +11,8 @@ import Price from "./details/Price";
 import Color from "./details/Color";
 import Size from "./details/Size";
 import CallOrderBar from "./details/CallOrderBar";
+import { Heart, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+
 
 interface VariantOption {
     attribute: string;
@@ -73,6 +75,12 @@ export default function ProductMain({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [thumbsSwiper, setThumbsSwiper] = React.useState<any>(null);
     const [selectedVariants, setSelectedVariants] = React.useState<Record<string, number>>({});
+    const [zoomPosition, setZoomPosition] = React.useState({ x: 0, y: 0 });
+    const [isZooming, setIsZooming] = React.useState(false);
+    const [isHovering, setIsHovering] = React.useState(false);
+    const [activeImageIndex, setActiveImageIndex] = React.useState(0);
+    const mainImageRef = React.useRef<HTMLDivElement>(null);
+    const thumbnailScrollRef = React.useRef<HTMLDivElement>(null);
     
     const imagesToShow = product.images?.length ? product.images : [];
     
@@ -115,6 +123,43 @@ export default function ProductMain({
         setSelectedVariants(prev => ({ ...prev, [groupTitle]: optionIndex }));
     };
     
+    // Zoom functionality handlers
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!mainImageRef.current) return;
+        
+        const rect = mainImageRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const moveX = (x / rect.width) * 100;
+        const moveY = (y / rect.height) * 100;
+        
+        setZoomPosition({ x: moveX, y: moveY });
+    };
+    
+    const handleMouseEnter = () => {
+        setIsZooming(true);
+    };
+    
+    const handleMouseLeave = () => {
+        setIsZooming(false);
+    };
+    
+    // Handle thumbnail click/hover to change main image
+    const handleThumbnailClick = (index: number) => {
+        setActiveImageIndex(index);
+        if (thumbsSwiper) {
+            thumbsSwiper.slideTo(index);
+        }
+    };
+    
+    const handleThumbnailHover = (index: number) => {
+        setActiveImageIndex(index);
+        if (thumbsSwiper) {
+            thumbsSwiper.slideTo(index);
+        }
+    };
+    
     // Check if variant groups have data
     const hasVariantGroups = product.variantGroups && product.variantGroups.length > 0 && 
         product.variantGroups.some(g => g.options.some(o => o.attribute.trim()));
@@ -125,50 +170,82 @@ export default function ProductMain({
                 <div className="lg:basis-1/2 flex-shrink-0 mb-4 lg:mb-0 min-w-0">
                     {displayImages.length > 0 ? (
                         <>
-                            <div className="bg-gray-200 rounded-2xl aspect-square overflow-hidden mb-3 relative">
-                                <Swiper
-                                    modules={[Thumbs]}
-                                    thumbs={{
-                                        swiper:
-                                            thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+                            {/* Main Product Image with Zoom */}
+                            <div className="relative mb-4">
+                                <div
+                                    className="aspect-square bg-white rounded-2xl overflow-hidden relative group border border-gray-200 cursor-crosshair"
+                                    onMouseEnter={() => setIsHovering(true)}
+                                    onMouseLeave={() => setIsHovering(false)}
+                                    onMouseMove={(e) => {
+                                        const rect = e.currentTarget.getBoundingClientRect();
+                                        const x = ((e.clientX - rect.left) / rect.width) * 100;
+                                        const y = ((e.clientY - rect.top) / rect.height) * 100;
+                                        setZoomPosition({ x, y });
                                     }}
-                                    spaceBetween={12}
-                                    className="h-full w-full main-image-swiper"
-                                    grabCursor
                                 >
-                                    {displayImages.map((img, i) => (
-                                        <SwiperSlide key={i} style={{ height: '100%' }}>
-                                            <img
-                                                src={img}
-                                                alt={product.title}
-                                                className="object-cover w-full h-full"
-                                            />
-                                        </SwiperSlide>
-                                    ))}
-                                </Swiper>
-                            </div>
+                                    <Swiper
+                                        modules={[Thumbs]}
+                                        thumbs={{
+                                            swiper:
+                                                thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+                                        }}
+                                        spaceBetween={12}
+                                        className="h-full w-full main-image-swiper"
+                                        grabCursor
+                                        onSlideChange={(swiper) => setActiveImageIndex(swiper.activeIndex)}
+                                    >
+                                        {displayImages.map((img, i) => (
+                                            <SwiperSlide key={i} style={{ height: '100%' }}>
+                                                <img
+                                                    src={img}
+                                                    alt={product.title}
+                                                    className="object-contain w-full h-full"
+                                                />
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper>
 
-                            {/* THUMBNAILS */}
-                            <Swiper
-                                modules={[Thumbs]}
-                                onSwiper={setThumbsSwiper}
-                                spaceBetween={12}
-                                slidesPerView={4}
-                                watchSlidesProgress
-                                className="w-full thumb-swiper"
-                            >
-                                {displayImages.map((img, i) => (
-                                    <SwiperSlide key={i}>
-                                        <div className="w-full aspect-square rounded-[8px] overflow-hidden border border-gray-200">
-                                            <img
-                                                src={img}
-                                                alt={`thumb-${i}`}
-                                                className="object-cover w-full h-full"
+                                    {/* Zoomed Preview Panel (Desktop Only) - Right Side */}
+                                    {isHovering && (
+                                        <div className="hidden lg:block absolute left-[calc(100%+16px)] top-0 w-72 h-72 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden z-50">
+                                            <div
+                                                className="w-full h-full"
+                                                style={{
+                                                    backgroundImage: `url(${displayImages[activeImageIndex]})`,
+                                                    backgroundSize: '250%',
+                                                    backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                                                    backgroundRepeat: 'no-repeat',
+                                                }}
                                             />
                                         </div>
-                                    </SwiperSlide>
-                                ))}
-                            </Swiper>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Thumbnail Gallery - Bottom */}
+                            <div className="relative px-0">
+                                <div
+                                    ref={thumbnailScrollRef}
+                                    className="flex gap-3 overflow-x-auto scrollbar-hide py-2 scroll-smooth"
+                                >
+                                    {displayImages.map((img, i) => (
+                                        <button
+                                            key={i}
+                                            onMouseEnter={() => handleThumbnailClick(i)}
+                                            onClick={() => handleThumbnailClick(i)}
+                                            className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 p-1 transition-all overflow-hidden transform hover:scale-105 ${
+                                                activeImageIndex === i
+                                                    ? 'border-blue-500 shadow-md'
+                                                    : 'border-gray-200 hover:border-blue-300'
+                                            }`}
+                                            aria-label={`View image ${i + 1}`}
+                                            aria-pressed={activeImageIndex === i}
+                                        >
+                                            <img src={img} alt={`Thumb ${i + 1}`} className="w-full h-full object-contain" />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </>
                     ) : (
                         <div className="bg-gray-200 rounded-2xl aspect-square flex items-center justify-center text-gray-400">
