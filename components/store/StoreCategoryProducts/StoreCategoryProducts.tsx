@@ -154,7 +154,7 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3"><h3 className="text-white font-bold text-sm flex items-center gap-2"><Hash size={14} /> Tags</h3></div>
         <div className="divide-y divide-gray-50">
           {activeTags.map(t => {
-            const active = isTagFilter ? eq(tagFromUrl, t.name) : selectedTag === t.name;
+            const active = isTagFilter ? eq(tagFromUrl || undefined, t.name) : selectedTag === t.name;
             return (<button key={t.id} onClick={() => { 
               if (isTagFilter) {
                 handleCategoryChangeWithScroll(`tag:${t.name}`);

@@ -8,6 +8,7 @@ export type CatalogGroup = {
 };
 
 export interface HeaderSearchProps {
+  inputProps: {};
   containerRef: RefObject<HTMLDivElement>;
   activeSearchValue: string;
   onInputChange: (value: string) => void;

@@ -175,78 +175,133 @@ const FloatingChatButton: React.FC<{ websiteConfig?: WebsiteConfig; onOpenChat?:
   return null;
 };
 
-// Style 1: Default - Dark gradient with feature badges
+// Style 1: Default footer matching provided snippet
 const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantId, onOpenChat }) => {
-  const whatsappLink = buildWhatsAppLink(websiteConfig?.whatsappNumber);
   const resolvedFooterLogo = resolveTenantFooterLogo(websiteConfig, logo, tenantId);
-  const currentYear = new Date().getFullYear();
-  const quickLinks = getFooterQuickLinks(websiteConfig);
-  const usefulLinks = getFooterUsefulLinks(websiteConfig);
-
   return (
-    <>
-      <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-gray-300 mt-auto store-footer-minheight">
-        <div className="border-b border-gray-800">
-          <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {features.map((feature, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800 transition-colors">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white flex-shrink-0">{feature.icon}</div>
-                  <div><h4 className="font-semibold text-white text-sm">{feature.title}</h4><p className="text-xs text-gray-400">{feature.desc}</p></div>
-                </div>
-              ))}
-            </div>
+    <footer className="w-full font-lato">
+      <div className="mx-auto max-w-[1720px] bg-black rounded-t-[112px] px-20 pt-14 pb-6 max-md:px-6 max-md:pt-10 max-md:rounded-t-[48px]">
+
+        {/* ── DESKTOP layout (md and above) ── */}
+        <div className="hidden md:flex flex-row items-start justify-between gap-8">
+
+          <div className="flex flex-col gap-4 max-w-[220px]">
+            {resolvedFooterLogo ? (
+              <img
+                src={typeof normalizeImageUrl === 'function' ? normalizeImageUrl(resolvedFooterLogo) : String(resolvedFooterLogo)}
+                alt={websiteConfig?.websiteName || 'Logo'}
+                className="w-[169px]"
+              />
+            ) : (
+              <h3 className="text-2xl font-bold text-white">{websiteConfig?.websiteName || 'Logo'}</h3>
+            )}
+            <p className="text-[13px] font-inter text-white leading-[1.7] mt-1">
+              we create possibilities
+              <br />
+              for the connected
+              <br />
+              world.
+            </p>
           </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 py-10 md:py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
-            <div className="lg:col-span-1">
-              {resolvedFooterLogo ? <img src={normalizeImageUrl(resolvedFooterLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="h-12 w-auto object-contain mb-4" /> : <h3 className="text-2xl font-bold text-white mb-4">{websiteConfig?.websiteName || 'Our Store'}</h3>}
-              <p className="text-sm text-gray-400 mb-5 leading-relaxed">{websiteConfig?.shortDescription || websiteConfig?.brandingText || 'Your trusted online shopping destination.'}</p>
-              <div className="flex gap-2">
-                {websiteConfig?.socialLinks?.slice(0, 5).map((social, idx) => (
-                  <a key={idx} href={social.url || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 hover:bg-gradient-to-r hover:from-pink-500 hover:to-rose-500 flex items-center justify-center text-gray-400 hover:text-white transition-all" aria-label={social.platform}>{resolveSocialIcon(social.platform)}</a>
-                ))}
-              </div>
+
+          <div className="flex flex-row gap-20">
+
+            {/* VISIT */}
+            <div className="flex flex-col gap-3">
+              <h4 className="text-[16px] font-semibold text-[#7DB541] uppercase tracking-wider">
+                VISIT
+              </h4>
+              <p className="text-[12px] text-white leading-[1.8] font-medium">
+                D-14/3, Bankcolony,
+                <br />
+                Savar, Dhaka-1340
+              </p>
             </div>
-            <div>
-              <h4 className="text-white font-bold mb-5 text-lg relative inline-block">Quick Links<span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full"></span></h4>
-              <ul className="space-y-3">
-                {quickLinks.map((link, idx) => (
-                  <li key={link.id || idx}><a href={link.url} className="text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group text-sm"><ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-pink-500" />{link.label}</a></li>
+
+            {/* QUICK LINK */}
+            <div className="flex flex-col gap-[20px]">
+              <h4 className="text-[16px] font-semibold text-[#7DB541] uppercase tracking-wider">
+                QUICK LINK
+              </h4>
+              <ul className="flex flex-col gap-2">
+                {["Products", "Categories", "Campaigns"].map((item) => (
+                  <li key={item}>
+                    <a href="/" className="text-[12px] text-white leading-[1.8] font-medium">
+                      {item}
+                    </a>
+                  </li>
                 ))}
               </ul>
             </div>
-            <div>
-              <h4 className="text-white font-bold mb-5 text-lg relative inline-block">Useful Links<span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full"></span></h4>
-              <ul className="space-y-3">
-                {usefulLinks.map((link, idx) => (
-                  <li key={link.id || idx}><a href={link.url} className="text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group text-sm"><ArrowRight size={14} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all text-pink-500" />{link.label}</a></li>
+
+            {/* USEFUL LINK */}
+            <div className="flex flex-col gap-[20px]">
+              <h4 className="text-[16px] font-semibold text-[#7DB541] uppercase tracking-wider">
+                USEFUL LINK
+              </h4>
+              <ul className="flex flex-col gap-2">
+                {["Facebook", "Instagram", "Twitter"].map((item) => (
+                  <li key={item}>
+                    <a href="#" className="text-[12px] text-white leading-[1.8] font-medium">
+                      {item}
+                    </a>
+                  </li>
                 ))}
               </ul>
             </div>
-            <div>
-              <h4 className="text-white font-bold mb-5 text-lg relative inline-block">Contact Us<span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full"></span></h4>
-              <ul className="space-y-4">
-                {websiteConfig?.addresses?.[0] && <li className="flex gap-3"><MapPin size={18} className="text-pink-500 flex-shrink-0 mt-0.5" /><span className="text-sm text-gray-400">{websiteConfig.addresses[0]}</span></li>}
-                {websiteConfig?.phones?.[0] && <li className="flex gap-3"><Phone size={18} className="text-pink-500 flex-shrink-0" /><a href={`tel:${websiteConfig.phones[0]}`} className="text-sm text-gray-400 hover:text-white">{websiteConfig.phones[0]}</a></li>}
-                {websiteConfig?.emails?.[0] && <li className="flex gap-3"><Mail size={18} className="text-pink-500 flex-shrink-0" /><a href={`mailto:${websiteConfig.emails[0]}`} className="text-sm text-gray-400 hover:text-white">{websiteConfig.emails[0]}</a></li>}
-                {websiteConfig?.whatsappNumber && <li className="flex gap-3"><MessageCircle size={18} className="text-green-500 flex-shrink-0" /><a href={whatsappLink || '#'} target="_blank" rel="noreferrer" className="text-sm text-gray-400 hover:text-white">WhatsApp</a></li>}
+
+            {/* LEGAL */}
+            <div className="flex flex-col gap-[20px]">
+              <h4 className="text-[16px] font-semibold text-[#7DB541] uppercase tracking-wider">
+                LEGAL
+              </h4>
+              <ul className="flex flex-col gap-2">
+                {["Terms & Condition", "Privacy Policy", "Return Policy"].map((item) => (
+                  <li key={item}>
+                    <a href="/" className="text-[12px] text-white leading-[1.8] font-medium">
+                      {item}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
+
           </div>
         </div>
-        <div className="border-t border-gray-800">
-          <div className="max-w-7xl mx-auto px-4 py-5">
-            <CopyrightSection websiteConfig={websiteConfig} currentYear={currentYear} variant="dark">
-              <div className="flex items-center gap-3"><span className="text-xs text-gray-500">We accept:</span><div className="flex gap-2">{['bKash', 'Nagad', 'Visa', 'Master'].map((m, i) => <div key={i} className="px-3 py-1.5 bg-gray-800 rounded text-xs font-medium text-gray-400">{m}</div>)}</div></div>
-              <p className="text-xs text-gray-500 flex items-center gap-1">Made with <Heart size={12} className="text-pink-500 fill-pink-500" /> in Bangladesh</p>
-            </CopyrightSection>
-          </div>
+
+        {/* ── MOBILE layout ── */}
+        <div className="flex md:hidden flex-col items-center gap-4">
+          {resolvedFooterLogo ? (
+            <img
+              src={typeof normalizeImageUrl === 'function' ? normalizeImageUrl(resolvedFooterLogo) : String(resolvedFooterLogo)}
+              alt={websiteConfig?.websiteName || 'Logo'}
+              className="w-[140px]"
+            />
+          ) : (
+            <h3 className="text-xl font-bold text-white">{websiteConfig?.websiteName || 'Logo'}</h3>
+          )}
+
+          <p className="text-sm font-medium text-[#635C5C] text-center">
+            Oversear Products © 2026. All rights reserved.
+          </p>
+
+          {/* Website URL */}
+          <a
+            href="https://www.opbd.shop"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[13px] text-[#3FC3D7] font-medium"
+          >
+            www.opbd.shop
+          </a>
         </div>
-      </footer>
-      <FloatingChatButton websiteConfig={websiteConfig} onOpenChat={onOpenChat} />
-    </>
+
+        {/* Desktop Copyright */}
+        <p className="hidden md:block text-[12px] font-medium text-white mt-6">
+          ©2026 System Next IT, All right reserved.
+        </p>
+      </div>
+    </footer>
   );
 };
 

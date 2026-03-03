@@ -53,35 +53,38 @@ export const TagCountdownTimer = ({ expiresAt, tagName, compact = false }: TagCo
     );
   }
 
+  const items = [
+    { label: 'H', value: padZero(totalHours) },
+    { label: 'M', value: padZero(timeLeft.minutes) },
+    { label: 'S', value: padZero(timeLeft.seconds) },
+  ];
+
   return (
-    <div className="flex items-center gap-1.5" role="timer" aria-label={`${tagName || 'Tag'} countdown`}>
-      {/* Hours */}
-      <div className="flex flex-col items-center justify-center w-9 h-9 border-[1.5px] rounded-md bg-white" style={{ borderColor: primaryColor }}>
-        <span className="font-bold text-[12px] leading-none mb-0.5" style={{ color: primaryColor }}>{padZero(totalHours)}</span>
-        <span className="text-[7px] font-medium leading-none uppercase" style={{ color: primaryColor }}>Hours</span>
-      </div>
+    <div className="flex items-center gap-0 lg:gap-3" role="timer" aria-label={`${tagName || 'Tag'} countdown`}>
+      <div className="flex items-center gap-0 lg:gap-3">
+        {items.map((item, index) => (
+          <div key={index} className="flex items-center gap-0 lg:gap-3">
 
-      {/* Minutes */}
-      <div className="flex flex-col items-center justify-center w-9 h-9 border-[1.5px] rounded-md bg-white" style={{ borderColor: primaryColor }}>
-        <span className="font-bold text-[12px] leading-none mb-0.5" style={{ color: primaryColor }}>{padZero(timeLeft.minutes)}</span>
-        <span className="text-[7px] font-medium leading-none uppercase" style={{ color: primaryColor }}>Mins</span>
-      </div>
+            {/* Box */}
+            <div className="relative w-10 h-10 rounded-[4px] bg-white flex items-center justify-center">
+              {/* Number */}
+              {/* style={{ color: primaryColor }} */}
+              <span className="text-sm font-black text-gray-900 leading-none font-lato">{item.value}</span>
 
-      {/* Seconds */}
-      <div className="flex flex-col items-center justify-center w-9 h-9 border-[1.5px] rounded-md bg-white" style={{ borderColor: primaryColor }}>
-        <span className="font-bold text-[12px] leading-none mb-0.5" style={{ color: primaryColor }}>{padZero(timeLeft.seconds)}</span>
-        <span className="text-[7px] font-medium leading-none uppercase" style={{ color: primaryColor }}>Sec</span>
-      </div>
+              {/* Label badge — bottom left corner */}
+              <div className="absolute bottom-[-10px] left-0 bg-[#FF9C1A] rounded-[0_4px_0_4px] px-1">
+                <span className="text-white text-[10px] font-bold leading-none font-lato">{item.label}</span>
+              </div>
+            </div>
 
-      {/* Heartbeat dot */}
-      <div className="ml-1 flex items-center justify-center">
-        <div className="relative flex items-center justify-center w-5 h-5">
-          <div className="absolute inset-0 rounded-full animate-ping opacity-20" style={{ backgroundColor: `rgb(${primaryRgbVal})` }} />
-          <div className="absolute w-3 h-3 rounded-full opacity-10" style={{ backgroundColor: `rgb(${primaryRgbVal})` }} />
-          <div className="relative w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: `rgb(${primaryRgbVal})`, boxShadow: `0 0 8px rgba(${primaryRgbVal} / 0.7)` }} />
+            {/* Colon separator */}
+            {index < items.length - 1 && (
+              <span className="text-[#FF9C1A] font-black text-2xl sm:text-3xl leading-none font-lato">:</span>
+            )}
+          </div>
+        ))}
         </div>
       </div>
-    </div>
   );
 };
 

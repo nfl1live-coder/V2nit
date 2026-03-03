@@ -191,6 +191,7 @@ return (
             title="Add to Cart"
           >
             <ShoppingCart className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+             Cart
           </button>
 
           {/* Buy Now Button */}

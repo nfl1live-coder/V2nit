@@ -40,15 +40,15 @@ const Badge = memo<{ count: number }>(({ count }) =>
   count > 0 ? <span className="absolute -top-2 -right-2 bg-theme-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{count}</span> : null
 );
 
-// Style 1: Default - Clean Modern with glassmorphism
+// Style 1: Default - Clean Modern Navigation
 const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
   resolvedHeaderLogo, logoKey, onHomeClick, searchProps,
-  wishlistBadgeCount, cartBadgeCount, onCartOpen,
+  wishlistBadgeCount, cartBadgeCount, onWishlistOpen, onCartOpen,
   user, onLoginClick, onProfileClick, onTrackOrder, onLogoutClick,
   isMenuOpen, onMenuToggle, onMenuClose, menuRef,
   categoriesList, onCategoriesClick, onCategorySelect,
   categoryMenuRef, isCategoryMenuOpen, onCategoryMenuOpen,
-  onProductsClick, websiteConfig
+  onProductsClick, websiteConfig, ImageSearchClick
 }) => {
   const menuItems = useMemo(() => [
     { icon: <UserCircle size={16} />, label: 'My Profile', action: onProfileClick },
@@ -58,59 +58,108 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
   const handleMenuClick = (action?: () => void) => { onMenuClose(); action?.(); };
 
   return (
-    <header className="hidden md:block bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
-      <div className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
-        <button type="button" className="flex items-center flex-shrink-0 group" onClick={onHomeClick}>
-          {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[56px] w-auto max-w-[240px] object-contain transition-all duration-300 group-hover:scale-105" /> : <h2 className="text-2xl font-black tracking-tight text-theme-primary">{websiteConfig?.websiteName || 'My Store'}</h2>}
+    <nav className="hidden lg:block bg-white sticky top-0 z-40 border-b border-[#F1F5FF] overflow-x-hidden">
+      <div className="max-w-[1720px] mx-auto w-full flex items-center justify-between px-6 py-4">
+        
+        {/* Logo */}
+        <button type="button" className="flex-shrink-0" onClick={onHomeClick}>
+          {resolvedHeaderLogo ? (
+            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[48px] w-auto object-contain" />
+          ) : (
+            <h2 className="text-xl font-bold text-gray-900">{websiteConfig?.websiteName || 'Logo'}</h2>
+          )}
         </button>
-        <DesktopSearchBar {...searchProps} />
-        <div className="flex items-center gap-2 text-gray-600">
-          {[{ icon: <ShoppingCart size={20} strokeWidth={1.8} />, label: 'Cart', badge: cartBadgeCount, onClick: onCartOpen }].map(({ icon, label, badge, onClick }) => (
-            <button key={label} type="button" className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl hover:bg-gray-50/80 hover:text-theme-primary transition-all group" onClick={onClick}>
-              <div className="relative">{icon}<Badge count={badge} /></div>
-              <span className="text-sm font-medium text-gray-700 group-hover:text-theme-primary">{label}</span>
+
+        {/* Middle Section */}
+        <div className="flex items-center justify-center flex-1 mx-10 min-w-0">
+          <button type="button" onClick={searchProps.onVisualSearch} className="bg-[#F1F5FF] p-2 rounded-lg flex-shrink-0 hover:bg-gray-200 transition-colors" title="AI Image Search">
+            <img className="cursor-pointer" src="https://theme-home-snit.vercel.app/images/cameraIcon.svg" alt="Image Search" />
+          </button>
+          
+          {/* Search Box */}
+          <div className="flex items-center gap-2 bg-[#F1F5FF] rounded-xl pl-3 py-2 relative ml-6 w-full max-w-[671px] min-w-0">
+            <button type="button" onClick={searchProps.onVoiceSearch} className="p-1">
+              <img className="cursor-pointer" src="https://theme-home-snit.vercel.app/images/mic-02.svg" alt="Mic" />
             </button>
-          ))}
-          <div className="relative" ref={menuRef}>
-            <button type="button" className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl hover:bg-gray-50/80 hover:text-theme-primary transition-all group" onClick={user ? onMenuToggle : onLoginClick}>
-              <div className="bg-gradient-to-br from-theme-primary/10 to-theme-primary/5 p-2.5 rounded-full"><User size={17} strokeWidth={1.8} className="text-theme-primary" /></div>
-              <span className="text-sm font-medium text-gray-700">{user ? <>{user.name.split(' ')[0]} <ChevronDown size={14} className="inline ml-0.5" /></> : 'Login'}</span>
+            <input
+              className="flex-1 font-inter bg-transparent outline-none text-[16px] font-normal placeholder-[#6A717F] min-w-0"
+              placeholder="Search in Cart and Get"
+              value={searchProps.activeSearchValue}
+              onChange={e => searchProps.onInputChange(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => searchProps.onInputChange(searchProps.activeSearchValue)}
+              className="
+                font-inter cursor-pointer absolute right-0 top-0 bottom-0
+                px-6 rounded-r-xl
+                bg-gradient-to-r from-[#38BDF8] to-[#1E90FF]
+                bg-[length:200%_200%] bg-left
+                hover:bg-right
+                transition-all duration-500 ease-in-out
+                text-white font-semibold text-[16px]
+              "
+            >
+              Search
             </button>
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="flex items-center gap-8 flex-shrink-0">
+          <button type="button" className="hover:opacity-70 transition-opacity" title="Translate">
+            <img src="https://theme-home-snit.vercel.app/images/translate.svg" alt="Translate" />
+          </button>
+          
+          <button type="button" onClick={onCartOpen} className="hover:opacity-70 transition-opacity relative">
+            <img src="https://theme-home-snit.vercel.app/images/shopping-cart-02.svg" alt="Cart" />
+            {cartBadgeCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-theme-primary text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                {cartBadgeCount}
+              </span>
+            )}
+          </button>
+
+          <div 
+            className="relative"
+            ref={menuRef}
+          >
+            <button 
+              type="button" 
+              className="flex items-center gap-2 cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={user ? onMenuToggle : onLoginClick}
+            >
+              <img src="https://theme-home-snit.vercel.app/images/user-circle.svg" alt="User" />
+              <span className="text-[16px] font-medium text-black">
+                {user ? user.name.split(' ')[0] : 'Sign in'}
+              </span>
+            </button>
+            
+            {/* User Menu Dropdown */}
             {user && isMenuOpen && (
-              <div className="absolute right-0 top-full mt-2.5 w-56 bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-100/80 py-2 z-50">
-                <div className="px-4 py-3.5 border-b border-gray-100/80 bg-gradient-to-r from-theme-primary/5 to-transparent rounded-t-2xl">
+              <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
+                <div className="px-4 py-3 border-b border-gray-100">
                   <p className="text-sm font-bold text-gray-900 truncate">{user.name}</p>
                   <p className="text-xs text-gray-500 truncate mt-0.5">{user.email}</p>
                 </div>
                 {menuItems.map(({ icon, label, action, danger }) => (
-                  <button key={label} type="button" onClick={() => handleMenuClick(action)} className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-all ${danger ? 'text-red-600 hover:bg-red-50/80' : 'text-gray-700 hover:bg-gray-50/80 hover:text-theme-primary'}`}>{icon} {label}</button>
+                  <button 
+                    key={label} 
+                    type="button" 
+                    onClick={() => handleMenuClick(action)} 
+                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-all ${danger ? 'text-red-600 hover:bg-red-50' : 'text-gray-700 hover:bg-gray-50 hover:text-theme-primary'}`}
+                  >
+                    {icon} {label}
+                  </button>
                 ))}
               </div>
             )}
           </div>
         </div>
       </div>
-      <nav className="border-t border-gray-100/60">
-        <div className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 flex gap-1 py-1.5 text-sm font-medium text-gray-600 items-center">
-          <button type="button" onClick={onHomeClick} className="px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all">Home</button>
-          {websiteConfig?.showMobileHeaderCategory && (
-            <div ref={categoryMenuRef} className="relative" onMouseEnter={() => onCategoryMenuOpen(true)} onMouseLeave={() => onCategoryMenuOpen(false)}>
-              <button type="button" onClick={onCategoriesClick} className="px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all flex items-center gap-1.5">Categories <ChevronDown size={14} className={`transition-transform ${isCategoryMenuOpen ? 'rotate-180' : ''}`} /></button>
-              {isCategoryMenuOpen && categoriesList?.length ? (
-                <div className="absolute left-0 top-full mt-0 w-60 rounded-2xl border border-gray-100/80 bg-white/95 backdrop-blur-lg py-2 shadow-2xl z-100">
-                  {categoriesList.map(cat => <button key={cat} type="button" onClick={() => { onCategorySelect?.(cat); onCategoryMenuOpen(false); }} className="block w-full px-4 py-3 text-left text-sm hover:bg-gray-50/80 hover:text-theme-primary transition-all">{cat}</button>)}
-                </div>
-              ) : null}
-            </div>
-          )}
-          <button type="button" onClick={onProductsClick} className="px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all">Products</button>
-          <button type="button" onClick={onTrackOrder} className="px-4 py-2.5 rounded-xl hover:bg-white/80 hover:text-theme-primary hover:shadow-sm transition-all flex items-center gap-2"><Truck size={15} strokeWidth={1.8} /> Track Order</button>
-        </div>
-      </nav>
-    </header>
+    </nav>
   );
 });
-
 // Style 2: Compact - Single row minimal header
 const HeaderStyle2 = memo<DesktopHeaderBarProps>(({
   resolvedHeaderLogo, logoKey, onHomeClick, searchProps,
