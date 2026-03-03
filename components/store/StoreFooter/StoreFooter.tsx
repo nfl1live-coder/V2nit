@@ -207,7 +207,7 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
           <div className="flex flex-row gap-20">
 
             {/* VISIT */}
-            <div className="flex flex-col gap-3">
+            {/* <div className="flex flex-col gap-3">
               <h4 className="text-[16px] font-semibold text-[#7DB541] uppercase tracking-wider">
                 VISIT
               </h4>
@@ -216,7 +216,7 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
                 <br />
                 Savar, Dhaka-1340
               </p>
-            </div>
+            </div> */}
 
             {/* QUICK LINK */}
             <div className="flex flex-col gap-[20px]">
@@ -256,12 +256,16 @@ const FooterStyle1: React.FC<StoreFooterProps> = ({ websiteConfig, logo, tenantI
                 LEGAL
               </h4>
               <ul className="flex flex-col gap-2">
-                {["Terms & Condition", "Privacy Policy", "Return Policy"].map((item) => (
-                  <li key={item}>
-                    <a href="/" className="text-[12px] text-white leading-[1.8] font-medium">
-                      {item}
+                {[
+                  { label: "Terms & Condition", url: "/termsnconditions" },
+                  { label: "Return Policy", url: "/returnpolicy" }
+                ].map((item) => (
+                  <li key={item.label}>
+                    <a href={item.url} className="text-[12px] text-white leading-[1.8] font-medium">
+                      {item.label}
                     </a>
                   </li>
+                  
                 ))}
               </ul>
             </div>
