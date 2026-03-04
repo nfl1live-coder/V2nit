@@ -60,12 +60,12 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
 
   return (
         <nav className="hidden lg:block bg-white sticky top-0 z-40 border-b border-[#F1F5FF] overflow-x-hidden">
-      <div className="max-w-[1720px] mx-auto w-full flex items-center justify-between px-6 py-4">
+      <div className="max-w-[1720px] mx-auto w-full flex items-center justify-between px-6 py-2">
         
         {/* Logo */}
         <button type="button" className="flex-shrink-0" onClick={onHomeClick}>
           {resolvedHeaderLogo ? (
-            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[48px] w-auto object-contain" />
+            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[40px] w-auto object-contain" />
           ) : (
             <h2 className="text-xl font-bold text-gray-900">{websiteConfig?.websiteName || 'Logo'}</h2>
           )}
