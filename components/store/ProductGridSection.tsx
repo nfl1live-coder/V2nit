@@ -49,7 +49,7 @@ const ProductSectionStyle1 = memo(({ title, titleExtra, products, accentColor = 
         <SectionHeader title={title} className="text-base md:text-lg font-bold text-gray-900"/>
         {titleExtra && <div className="ml-3">{titleExtra}</div>}
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
       </div>
     </section>
@@ -72,7 +72,7 @@ const ProductSectionStyle2 = memo(({ title, titleExtra, products, accentColor = 
         {titleExtra && <div className="ml-3">{titleExtra}</div>}
       </div>
       <div className="bg-white rounded-2xl border border-gray-200 p-3 sm:p-4">
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
         </div>
       </div>
@@ -96,7 +96,7 @@ const ProductSectionStyle3 = memo(({ title, titleExtra, products, accentColor = 
         </div>
       </div>
       <div className="bg-gray-50 rounded-b-2xl p-3 sm:p-4 border border-t-0 border-gray-200">
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
         </div>
       </div>
@@ -117,7 +117,7 @@ const ProductSectionStyle4 = memo(({ title, titleExtra, products, accentColor = 
         </div>
         <span className="text-sm text-gray-500">{products.length} products</span>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
       </div>
     </section>
@@ -144,7 +144,7 @@ const ProductSectionStyle5 = memo(({ title, titleExtra, products, accentColor = 
           </div>
         </div>
         <div className="p-3 sm:p-4">
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
             {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} showSoldCount={showSoldCount}/>)}
           </div>
         </div>
@@ -162,7 +162,10 @@ export const ProductGridSection = ({ title, titleExtra, products, accentColor = 
     const t = display.length;
     if (typeof window === 'undefined') return Math.min(6, t);
     const w = getViewportWidth();
-    return w >= 1280 ? Math.min(10, t) : w >= 768 ? Math.min(8, t) : Math.min(6, t);
+    if (w >= 1536) return Math.min(12, t);
+    if (w >= 1280) return Math.min(10, t);
+    if (w >= 768) return Math.min(8, t);
+    return Math.min(6, t);
   }, [display.length]);
 
   const [visible, setVisible] = useState(initCount);

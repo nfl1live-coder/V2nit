@@ -24,7 +24,7 @@ export const SearchResultsSection = ({ searchTerm, products, sortOption, onSortC
       </div>
     </div>
     {products.length ? (
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5 auto-rows-max">{products.map(p => <ProductCard key={`search-${p.id}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist}/>)}</div>
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 auto-rows-max">{products.map(p => <ProductCard key={`search-${p.id}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist}/>)}</div>
     ) : <EmptySearchState query={searchTerm} onClear={onClearSearch}/>}
   </section>
 );

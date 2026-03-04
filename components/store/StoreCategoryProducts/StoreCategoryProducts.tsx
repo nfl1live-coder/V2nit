@@ -239,7 +239,7 @@ export const StoreCategoryProducts = ({ products, categories, subCategories, chi
             </span>}
           </div>}
           {sorted.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {sorted.map(p => <ProductCard key={`cat-${p.id}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={websiteConfig?.productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} />)}
             </div>
           ) : (
