@@ -190,7 +190,7 @@ const OptimizedImage = memo(
             decoding={priority ? 'sync' : 'async'}
             onLoad={handleLoad}
             onError={handleError}
-            className={`w-full h-full transition-opacity duration-300 ${
+            className={`w-fit h-fit transition-opacity duration-300 ${
               objectFit === 'contain' ? 'object-contain' : 'object-cover'
             } ${loaded ? 'opacity-100' : 'opacity-0'}`}
             style={style}

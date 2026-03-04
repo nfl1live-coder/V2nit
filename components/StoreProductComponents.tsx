@@ -113,7 +113,7 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
 // Note: This style emphasizes a clean look with interactive hover actions for quick view and add to cart, while keeping the product information concise and focused.
 return (
     <div 
-      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full"
+      className="relative inline-block w-full cursor-pointer rounded-[1rem] border border-[#ebebeb] shadow-[0_0_10px_rgba(0,0,0,0.07)] transition-all duration-500 ease-in-out no-underline"
       style={{ contain: 'layout' }}
       onMouseEnter={() => setIsHovered?.(true)}
       onMouseLeave={() => setIsHovered?.(false)}
@@ -206,7 +206,7 @@ return (
         </h3>
 
         {/* প্রাইজ সেকশন */}
-        <div className="mt-auto space-y-3">
+        <div className="mt-auto space-y-3 items-center justify-center flex flex-col">
           <div className="flex flex-wrap items-baseline gap-2">
           <span className="text-[#2F3485] font-bold text-[16px] text-center font-roboto ">
             ৳{Number(price).toLocaleString()}
@@ -217,18 +217,18 @@ return (
             </span>
           )}
         
-        <div className="w-full">
+       
                <span className="text-[#15A4EC] text-[10px] lg:text-sm font-semibold bg-[#15A4EC]/10 px-2 py-0.5 rounded-full">
                 Get {product.coins} Coins
               </span>
-         </div>
+         
         </div>
         {/* অ্যাকশন বাটন গ্রুপ */}
-       <div className="flex flex-col gap-2">
-        <div className="flex gap-2">         
+       <div className="mt-[10px] flex items-center gap-[10px] w-full">
+       <div className="mt-[10px] flex items-center gap-[10px] w-full">
            {/* Add to Cart Button */}
           <button 
-            className="flex-1 px-3 py-2 flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-b from-[#FF9D1B] to-[#FF6C01] text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110"
+            className="flex-1 px-3 py-1 flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-b from-[#FF9D1B] to-[#FF6C01] text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110"
             onClick={(e) => { e.stopPropagation(); handleCart?.(e); }}
             title="Add to Cart"
           >
@@ -238,7 +238,7 @@ return (
 
           {/* Buy Now Button */}
           <button 
-            className="flex-1 px-3 py-2 rounded-lg bg-gradient-to-r from-[#38BDF8] to-[#1E90FF] text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110" 
+            className="flex-1 px-3 py-1 flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-b from-[#38BDF8] to-[#1E90FF]  text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110" 
             onClick={(e) => { e.stopPropagation(); handleBuyNow?.(); }}
           >
             <span>Buy Now</span>
