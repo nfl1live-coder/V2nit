@@ -5,6 +5,7 @@ import type { HeaderSearchProps } from './headerTypes';
 import { DesktopSearchBar } from './HeaderSearchBar';
 import type { User as UserType, WebsiteConfig } from '../../../types';
 import HeaderStyle6Desktop from './HeaderStyle6';
+import MenuHome from './MenuHome';
 
 
 interface DesktopHeaderBarProps {
@@ -58,7 +59,7 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
   const handleMenuClick = (action?: () => void) => { onMenuClose(); action?.(); };
 
   return (
-    <nav className="hidden lg:block bg-white sticky top-0 z-40 border-b border-[#F1F5FF] overflow-x-hidden">
+        <nav className="hidden lg:block bg-white sticky top-0 z-40 border-b border-[#F1F5FF] overflow-x-hidden">
       <div className="max-w-[1720px] mx-auto w-full flex items-center justify-between px-6 py-4">
         
         {/* Logo */}
@@ -153,10 +154,16 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
                   </button>
                 ))}
               </div>
+              
             )}
+            
           </div>
+          
         </div>
       </div>
+      {/* // Announcement Bar */}
+                          <MenuHome />
+
     </nav>
   );
 });
