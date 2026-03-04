@@ -70,5 +70,13 @@
     "tenantId": "69911626583a92d2420aecab",
     "folder": null,
     "filename": "2b490ec7-e857-4e72-9f00-e728c43dadb0.webp"
+  },
+  {
+    "originalUrl": "http://localhost:5001/uploads/images/69a7893b5495af73c7418ef4/8afd8763-144e-4913-8b08-2b7f6e781c93.webp",
+    "trashPath": "/uploads/trash/69a7893b5495af73c7418ef4/1772637392626_8afd8763-144e-4913-8b08-2b7f6e781c93.webp",
+    "deletedAt": 1772637392629,
+    "tenantId": "69a7893b5495af73c7418ef4",
+    "folder": null,
+    "filename": "8afd8763-144e-4913-8b08-2b7f6e781c93.webp"
   }
 ]
