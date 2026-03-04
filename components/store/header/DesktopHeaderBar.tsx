@@ -176,7 +176,7 @@ const HeaderStyle2 = memo<DesktopHeaderBarProps>(({
 
   return (
     <header className="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
+      <div className="max-w-[1500px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
         <button type="button" className="flex-shrink-0" onClick={onHomeClick}>
           {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[56px] w-auto max-w-[240px] object-contain" /> : <h2 className="text-xl font-bold text-gray-900">{websiteConfig?.websiteName || 'Store'}</h2>}
         </button>
@@ -455,7 +455,7 @@ const HeaderStyle4 = memo<DesktopHeaderBarProps>(({
   return (
     <header className="hidden md:block sticky top-0 z-50">
       <div className="bg-gray-900 text-white/80 text-xs">
-        <div className="max-w-[1408px] mx-auto px-3 sm:px-4 lg:px-6 py-1.5 flex items-center justify-between">
+        <div className="max-w-[1500px] mx-auto px-3 sm:px-4 lg:px-6 py-1.5 flex items-center justify-between">
           <div className="flex items-center gap-4">
             {websiteConfig?.phones?.[0] && <span className="flex items-center gap-1"><Phone size={12} /> {websiteConfig.phones[0]}</span>}
             {websiteConfig?.emails?.[0] && <span className="flex items-center gap-1"><Mail size={12} /> {websiteConfig.emails[0]}</span>}
@@ -467,7 +467,7 @@ const HeaderStyle4 = memo<DesktopHeaderBarProps>(({
         </div>
       </div>
       <div className="bg-white shadow-sm">
-        <div className="max-w-[1408px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
+        <div className="max-w-[1500px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
           <button type="button" className="flex-shrink-0" onClick={onHomeClick}>
             {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[56px] w-auto max-w-[240px] object-contain" /> : <h2 className="text-xl font-bold text-theme-primary">{websiteConfig?.websiteName || 'Store'}</h2>}
           </button>
@@ -530,7 +530,7 @@ const HeaderStyle5 = memo<DesktopHeaderBarProps>(({
 
   return (
     <header className="hidden md:block bg-gray-900 sticky top-0 z-50 shadow-xl">
-      <div className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
+      <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
         <button type="button" className="flex items-center flex-shrink-0" onClick={onHomeClick}>
           {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[56px] w-auto max-w-[240px] object-contain brightness-0 invert" /> : <h2 className="text-2xl font-bold text-white">{websiteConfig?.websiteName || 'Store'}</h2>}
         </button>

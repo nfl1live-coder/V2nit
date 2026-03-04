@@ -25,6 +25,7 @@ import { DarkModeProvider } from './context/DarkModeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { HelmetProvider } from 'react-helmet-async';
 import { DataService } from './services/DataService';
+import { StorageErrorBoundary } from './components/StorageErrorBoundary';
 
 // Extracted hooks
 import { useAppState } from './hooks/useAppState';
@@ -423,10 +424,11 @@ const App = () => {
 
   // === RENDER ===
   return (
-    <HelmetProvider>
-      <AuthProvider>
-        <LanguageProvider tenantId={activeTenantId}>
-        <DarkModeProvider>
+    <StorageErrorBoundary>
+      <HelmetProvider>
+        <AuthProvider>
+          <LanguageProvider tenantId={activeTenantId}>
+          <DarkModeProvider>
           <ThemeProvider themeConfig={themeConfig || undefined}>
             <Suspense fallback={null}>
               <Toaster position="top-right" toastOptions={{ duration: 2500 }} />
@@ -529,6 +531,7 @@ const App = () => {
         </LanguageProvider>
       </AuthProvider>
     </HelmetProvider>
+    </StorageErrorBoundary>
   );
 };
 

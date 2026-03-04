@@ -152,11 +152,11 @@ return (
           loading="lazy"
         /> */}
 
-        <div className="w-full aspect-[5/5] flex items-center justify-center p-4">
+        <div className="flex h-[220px] w-full items-center justify-center overflow-hidden">
           <img 
             src={getImage(product)}
           alt={product?.name || 'Product'} 
-            className="max-w-full max-h-full object-contain"
+            className="height-fit w-fit"
             
           loading="lazy"
           />
@@ -199,7 +199,7 @@ return (
         </div>
         {/* প্রোডাক্ট নাম */}
         <h3 
-          className="text-black text-sm lg:text-xl font-bold truncate mb-2 group-hover:text-[#15A4EC] transition-colors" 
+          className="text-[14px] font-medium text-center mb-[5px] text-black leading-normal h-[39px] line-clamp-2 overflow-hidden text-ellipsis" 
           onClick={() => onClick?.(product)}
         >
           {String(product?.name || 'Unknown Product')}
@@ -208,7 +208,7 @@ return (
         {/* প্রাইজ সেকশন */}
         <div className="mt-auto space-y-3">
           <div className="flex flex-wrap items-baseline gap-2">
-          <span className="text-[#2F3485] font-bold text-lg lg:text-2xl">
+          <span className="text-[#2F3485] font-bold text-[16px] text-center font-roboto ">
             ৳{Number(price).toLocaleString()}
           </span>
           {originalPrice > 0 && originalPrice !== price && (
