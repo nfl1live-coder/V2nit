@@ -107,15 +107,15 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-8 flex-shrink-0">
+        <div className="flex items-center gap-6 flex-shrink-0">
           <button type="button" className="hover:opacity-70 transition-opacity" title="Translate">
-            <img src="https://theme-home-snit.vercel.app/images/translate.svg" alt="Translate" />
+            <img src="https://theme-home-snit.vercel.app/images/translate.svg" alt="Translate" className="w-8 h-8" />
           </button>
           
           <button type="button" onClick={onCartOpen} className="hover:opacity-70 transition-opacity relative">
-            <img src="https://theme-home-snit.vercel.app/images/shopping-cart-02.svg" alt="Cart" />
+            <img src="https://theme-home-snit.vercel.app/images/shopping-cart-02.svg" alt="Cart" className="w-8 h-8" />
             {cartBadgeCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-theme-primary text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-theme-primary text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center text-[10px]">
                 {cartBadgeCount}
               </span>
             )}
@@ -127,11 +127,11 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
           >
             <button 
               type="button" 
-              className="flex items-center gap-2 cursor-pointer hover:opacity-70 transition-opacity"
+              className="flex items-center gap-1.5 cursor-pointer hover:opacity-70 transition-opacity"
               onClick={user ? onMenuToggle : onLoginClick}
             >
-              <img src="https://theme-home-snit.vercel.app/images/user-circle.svg" alt="User" />
-              <span className="text-[16px] font-medium text-black">
+              <img src="https://theme-home-snit.vercel.app/images/user-circle.svg" alt="User" className="w-8 h-8"/>
+              <span className="text-[14px] font-medium text-black">
                 {user ? user.name.split(' ')[0] : 'Sign in'}
               </span>
             </button>
