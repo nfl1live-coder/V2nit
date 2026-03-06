@@ -5,6 +5,7 @@ import type { HeaderSearchProps } from './headerTypes';
 import { DesktopSearchBar } from './HeaderSearchBar';
 import type { User as UserType, WebsiteConfig } from '../../../types';
 import HeaderStyle6Desktop from './HeaderStyle6';
+import MenuHome from './MenuHome';
 
 
 interface DesktopHeaderBarProps {
@@ -58,13 +59,13 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
   const handleMenuClick = (action?: () => void) => { onMenuClose(); action?.(); };
 
   return (
-    <nav className="hidden lg:block bg-white sticky top-0 z-40 border-b border-[#F1F5FF] overflow-x-hidden">
-      <div className="max-w-[1720px] mx-auto w-full flex items-center justify-between px-6 py-4">
+        <nav className="hidden lg:block bg-white sticky top-0 z-40 border-b border-[#F1F5FF] overflow-x-hidden">
+      <div className="max-w-[1720px] mx-auto w-full flex items-center justify-between px-6 py-2">
         
         {/* Logo */}
         <button type="button" className="flex-shrink-0" onClick={onHomeClick}>
           {resolvedHeaderLogo ? (
-            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[48px] w-auto object-contain" />
+            <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[40px] w-auto object-contain" />
           ) : (
             <h2 className="text-xl font-bold text-gray-900">{websiteConfig?.websiteName || 'Logo'}</h2>
           )}
@@ -106,15 +107,15 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-8 flex-shrink-0">
+        <div className="flex items-center gap-6 flex-shrink-0">
           <button type="button" className="hover:opacity-70 transition-opacity" title="Translate">
-            <img src="https://theme-home-snit.vercel.app/images/translate.svg" alt="Translate" />
+            <img src="https://theme-home-snit.vercel.app/images/translate.svg" alt="Translate" className="w-8 h-8" />
           </button>
           
           <button type="button" onClick={onCartOpen} className="hover:opacity-70 transition-opacity relative">
-            <img src="https://theme-home-snit.vercel.app/images/shopping-cart-02.svg" alt="Cart" />
+            <img src="https://theme-home-snit.vercel.app/images/shopping-cart-02.svg" alt="Cart" className="w-8 h-8" />
             {cartBadgeCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-theme-primary text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-theme-primary text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center text-[10px]">
                 {cartBadgeCount}
               </span>
             )}
@@ -126,11 +127,11 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
           >
             <button 
               type="button" 
-              className="flex items-center gap-2 cursor-pointer hover:opacity-70 transition-opacity"
+              className="flex items-center gap-1.5 cursor-pointer hover:opacity-70 transition-opacity"
               onClick={user ? onMenuToggle : onLoginClick}
             >
-              <img src="https://theme-home-snit.vercel.app/images/user-circle.svg" alt="User" />
-              <span className="text-[16px] font-medium text-black">
+              <img src="https://theme-home-snit.vercel.app/images/user-circle.svg" alt="User" className="w-8 h-8"/>
+              <span className="text-[14px] font-medium text-black">
                 {user ? user.name.split(' ')[0] : 'Sign in'}
               </span>
             </button>
@@ -153,10 +154,16 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
                   </button>
                 ))}
               </div>
+              
             )}
+            
           </div>
+          
         </div>
       </div>
+      {/* // Announcement Bar */}
+                          <MenuHome />
+
     </nav>
   );
 });
@@ -176,7 +183,7 @@ const HeaderStyle2 = memo<DesktopHeaderBarProps>(({
 
   return (
     <header className="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
+      <div className="max-w-[1500px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
         <button type="button" className="flex-shrink-0" onClick={onHomeClick}>
           {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[56px] w-auto max-w-[240px] object-contain" /> : <h2 className="text-xl font-bold text-gray-900">{websiteConfig?.websiteName || 'Store'}</h2>}
         </button>
@@ -455,7 +462,7 @@ const HeaderStyle4 = memo<DesktopHeaderBarProps>(({
   return (
     <header className="hidden md:block sticky top-0 z-50">
       <div className="bg-gray-900 text-white/80 text-xs">
-        <div className="max-w-[1408px] mx-auto px-3 sm:px-4 lg:px-6 py-1.5 flex items-center justify-between">
+        <div className="max-w-[1500px] mx-auto px-3 sm:px-4 lg:px-6 py-1.5 flex items-center justify-between">
           <div className="flex items-center gap-4">
             {websiteConfig?.phones?.[0] && <span className="flex items-center gap-1"><Phone size={12} /> {websiteConfig.phones[0]}</span>}
             {websiteConfig?.emails?.[0] && <span className="flex items-center gap-1"><Mail size={12} /> {websiteConfig.emails[0]}</span>}
@@ -467,7 +474,7 @@ const HeaderStyle4 = memo<DesktopHeaderBarProps>(({
         </div>
       </div>
       <div className="bg-white shadow-sm">
-        <div className="max-w-[1408px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
+        <div className="max-w-[1500px] mx-auto px-3 sm:px-4 lg:px-6 py-3 flex items-center gap-8">
           <button type="button" className="flex-shrink-0" onClick={onHomeClick}>
             {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[56px] w-auto max-w-[240px] object-contain" /> : <h2 className="text-xl font-bold text-theme-primary">{websiteConfig?.websiteName || 'Store'}</h2>}
           </button>
@@ -530,7 +537,7 @@ const HeaderStyle5 = memo<DesktopHeaderBarProps>(({
 
   return (
     <header className="hidden md:block bg-gray-900 sticky top-0 z-50 shadow-xl">
-      <div className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
+      <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
         <button type="button" className="flex items-center flex-shrink-0" onClick={onHomeClick}>
           {resolvedHeaderLogo ? <img key={logoKey} src={normalizeImageUrl(resolvedHeaderLogo)} alt={websiteConfig?.websiteName || 'Logo'} className="max-h-[56px] w-auto max-w-[240px] object-contain brightness-0 invert" /> : <h2 className="text-2xl font-bold text-white">{websiteConfig?.websiteName || 'Store'}</h2>}
         </button>

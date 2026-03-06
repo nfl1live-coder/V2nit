@@ -1,5 +1,11 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { initializeStorageCleanup } from './utils/storageCleanup';
+import { initializeSafeFetch } from './utils/safeFetch';
+
+// Initialize storage cleanup to handle IndexedDB quota exceeded errors
+initializeStorageCleanup();
+initializeSafeFetch();
 
 // Prefetch bootstrap data BEFORE React loads - critical for fast initial render
 // This runs in parallel with module loading, so data is ready when React needs it

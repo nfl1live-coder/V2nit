@@ -47,7 +47,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
           return;
         }
       } else if (isTenantLoginPortal) {
-        if (!user || !['admin', 'tenant_admin', 'staff'].includes(user.role)) {
+        if (!user || !user.role || !['admin', 'tenant_admin', 'staff'].includes(user.role)) {
           setError('Access denied. This portal is for tenant administrators only.');
           authService.logout();
           setIsLoading(false);

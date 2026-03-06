@@ -656,7 +656,7 @@ const StoreProductDetail = ({
         </div>
       )}
 
-      <main className="max-w-[1408px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4">
+      <main className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4">
         <div className="flex flex-col lg:flex-row gap-4">
 
           {/* Main Content: Product Details */}

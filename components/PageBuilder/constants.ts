@@ -320,8 +320,6 @@ export const SECTION_TO_CONFIG_KEY: Record<SectionType, keyof StoreLayout> = {
   heroSlider: 'productSectionStyle',
   categorySection: 'categorySectionStyle',
   productSection: 'productCardStyle',
-  showcaseSection: 'showcaseSectionStyle',
-  brandSection: 'brandSectionStyle',
   footer: 'footerStyle',
   bottomNav: 'bottomNavStyle',
   textBlock: 'productSectionStyle',

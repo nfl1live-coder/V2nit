@@ -408,7 +408,7 @@ export interface WebsiteConfig {
   categorySectionStyle?: string;
   showcaseSectionStyle?: string;
   brandSectionStyle?: string;
-  productSectionStyle?: string;
+  showcaseSection?: string;
   // New Additions
   voiceSearchLanguage?: string; // Adding it as optional (?) is usually safer
   carouselItems: CarouselItem[];
@@ -480,6 +480,8 @@ export interface WebsiteConfig {
   };
   readyTheme?: string;
   productDetailTheme?: string;
+  //
+
 }
 
 export interface DeliveryConfig {

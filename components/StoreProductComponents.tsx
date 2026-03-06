@@ -20,38 +20,80 @@ interface ProductCardProps {
 const getImage = (p: Product) => normalizeImageUrl(p.galleryImages?.[0] || p.image);
 
 // Style 1: Default - Clean modern card with gradient top bar
-const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist }) => {
+const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist, showSoldCount }) => {
   const isWishlisted = wishlist.includes(product.id);
   const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); onBuyNow ? onBuyNow(product) : onClick(product); };
   const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart?.(product); };
   const handleWishlist = (e: React.MouseEvent) => { e.stopPropagation(); onToggleWishlist?.(product.id); };
+  const discountPercent = product.originalPrice && product.price ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : null;
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden flex flex-col relative shadow-sm hover:shadow-lg transition-shadow duration-300" style={{ contain: 'layout' }}>
-      <div className="absolute to p-0 left-0 right-0 h-0.5 z-10" style={{ background: 'linear-gradient(to right, #8b5cf6, #ec4899)' }} />
-      <button className="absolute to p-2 left-2 z-10 text-pink-400 hover:text-pink-500 transition-colors w-4 h-4" onClick={handleWishlist}><Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} /></button>
-      <div className="absolute to p-2 right-2 z-10 min-w-[32px] h-[18px]">
-        {product.discount && <span className="text-white text-[8px] font-semibold px-1.5 py-0.5 rounded" style={{ background: 'linear-gradient(to right, #8b5cf6, #a855f7)' }}>SALE</span>}
+    <div className="group bg-white rounded-2xl overflow-hidden flex flex-col relative border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1" style={{ contain: 'layout' }}>
+      <div className="absolute top-0 left-0 right-0 h-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: 'linear-gradient(to right, var(--color-primary, #8b5cf6), var(--color-secondary, #ec4899))' }} />
+
+      <button
+        className="absolute top-2 left-2 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm shadow-sm flex items-center justify-center text-pink-500 hover:scale-110 transition-all"
+        onClick={handleWishlist}
+      >
+        <Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} strokeWidth={2} />
+      </button>
+
+      <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
+        {(product.discount || discountPercent) && (
+          <span className="text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm" style={{ background: 'linear-gradient(135deg, #ff5f6d, #ffc371)' }}>
+            {product.discount || `-${discountPercent}%`}
+          </span>
+        )}
       </div>
-      <div className="relative cursor-pointer bg-gray-50" style={{ aspectRatio: '4/3' }} onClick={() => onClick(product)}>
-        <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-cover" width={300} height={225} />
+
+      <div className="relative cursor-pointer bg-gray-50 overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
+        <LazyImage
+          src={getImage(product)}
+          alt={product.name}
+          className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-500"
+          width={400}
+          height={400}
+        />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
       </div>
-      <div className="px-2 pb-2 pt-1 flex-1 flex flex-col" style={{ minHeight: '110px' }}>
-        <div className="flex items-center gap-0.5 text-[9px] text-gray-400 mb-0.5 h-[12px]">
-          <Star size={9} className="text-yellow-400 flex-shrink-0" fill="#facc15" />
-          <span className="text-gray-500 font-medium">{product.rating || 5}</span>
-          <span className="text-gray-300">({product.reviews || 0})</span>
-          <span className="text-gray-200 mx-0.5">•</span>
-          <span className="text-gray-400">{product.soldCount || 0} sold</span>
+
+      <div className="px-3 pb-3 pt-2.5 flex-1 flex flex-col">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center gap-1 text-[10px] text-amber-500 font-semibold bg-amber-50 px-1.5 py-0.5 rounded-full">
+            <Star size={10} className="fill-amber-500" />
+            <span>{product.rating || 5}</span>
+            <span className="text-amber-300/80 font-normal">({product.reviews || 0})</span>
+          </div>
+          {(showSoldCount || product.soldCount) && (
+            <span className="text-[10px] text-gray-400 font-medium">{product.soldCount || 0} sold</span>
+          )}
         </div>
-        <h3 className="font-medium text-gray-700 text-[11px] leading-snug mb-1 line-clamp-2 cursor-pointer hover:text-cyan-600 transition-colors min-h-[28px]" onClick={() => onClick(product)}>{product.name}</h3>
-        <div className="flex items-baseline gap-1 mb-1.5 min-h-[18px]">
-          <span className="text-[13px] font-bold text-theme-primary">৳{product.price?.toLocaleString()}</span>
-          {product.originalPrice && <span className="text-[9px] text-gray-400 line-through">৳{product.originalPrice?.toLocaleString()}</span>}
+
+        <h3 className="font-semibold text-gray-800 text-[13px] leading-tight mb-2 line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors min-h-[32px]" onClick={() => onClick(product)}>
+          {product.name}
+        </h3>
+
+        <div className="flex items-baseline gap-1.5 mb-3 mt-auto">
+          <span className="text-base font-bold text-theme-primary">৳{product.price?.toLocaleString()}</span>
+          {product.originalPrice && (
+            <span className="text-[11px] text-gray-400 line-through font-medium">৳{product.originalPrice?.toLocaleString()}</span>
+          )}
         </div>
-        <div className="flex gap-1 mt-auto h-[30px]">
-          <button className="flex items-center justify-center w-8 h-full border border-theme-primary/60 text-theme-primary rounded-md hover:bg-theme-primary hover:text-white transition-all" onClick={handleCart}><ShoppingCart size={14} /></button>
-          <button className="flex-1 btn-order text-[11px] font-medium py-1.5 rounded-md h-full" onClick={handleBuyNow}>Buy Now</button>
+
+        <div className="flex gap-2 h-9">
+          <button
+            className="flex items-center justify-center w-9 h-full border border-gray-200 text-gray-600 rounded-xl hover:bg-theme-primary hover:text-white hover:border-theme-primary transition-all shadow-sm active:scale-95"
+            onClick={handleCart}
+            title="Add to Cart"
+          >
+            <ShoppingCart size={16} />
+          </button>
+          <button
+            className="flex-1 btn-order text-xs font-bold rounded-xl h-full shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center justify-center gap-1 bg-gradient-to-r from-theme-primary to-theme-secondary text-white"
+            onClick={handleBuyNow}
+          >
+            Buy Now
+          </button>
         </div>
       </div>
     </div>
@@ -71,7 +113,7 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
 // Note: This style emphasizes a clean look with interactive hover actions for quick view and add to cart, while keeping the product information concise and focused.
 return (
     <div 
-      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full"
+      className="relative inline-block w-full cursor-pointer rounded-[1rem] border border-[#ebebeb] shadow-[0_0_10px_rgba(0,0,0,0.07)] transition-all duration-500 ease-in-out no-underline"
       style={{ contain: 'layout' }}
       onMouseEnter={() => setIsHovered?.(true)}
       onMouseLeave={() => setIsHovered?.(false)}
@@ -110,11 +152,11 @@ return (
           loading="lazy"
         /> */}
 
-        <div className="w-full aspect-[5/5] flex items-center justify-center p-4">
+        <div className="flex h-[220px] w-full items-center justify-center overflow-hidden">
           <img 
             src={getImage(product)}
           alt={product?.name || 'Product'} 
-            className="max-w-full max-h-full object-contain"
+            className="height-fit w-fit"
             
           loading="lazy"
           />
@@ -157,16 +199,16 @@ return (
         </div>
         {/* প্রোডাক্ট নাম */}
         <h3 
-          className="text-black text-sm lg:text-xl font-bold truncate mb-2 group-hover:text-[#15A4EC] transition-colors" 
+          className="text-[14px] font-medium text-center mb-[5px] text-black leading-normal h-[39px] line-clamp-2 overflow-hidden text-ellipsis" 
           onClick={() => onClick?.(product)}
         >
           {String(product?.name || 'Unknown Product')}
         </h3>
 
         {/* প্রাইজ সেকশন */}
-        <div className="mt-auto space-y-3">
+        <div className="mt-auto space-y-3 items-center justify-center flex flex-col">
           <div className="flex flex-wrap items-baseline gap-2">
-          <span className="text-[#2F3485] font-bold text-lg lg:text-2xl">
+          <span className="text-[#2F3485] font-bold text-[16px] text-center font-roboto ">
             ৳{Number(price).toLocaleString()}
           </span>
           {originalPrice > 0 && originalPrice !== price && (
@@ -175,18 +217,18 @@ return (
             </span>
           )}
         
-        <div className="w-full">
+       
                <span className="text-[#15A4EC] text-[10px] lg:text-sm font-semibold bg-[#15A4EC]/10 px-2 py-0.5 rounded-full">
                 Get {product.coins} Coins
               </span>
-         </div>
+         
         </div>
         {/* অ্যাকশন বাটন গ্রুপ */}
-       <div className="flex flex-col gap-2">
-        <div className="flex gap-2">         
+       <div className="mt-[10px] flex items-center gap-[10px] w-full">
+       <div className="mt-[10px] flex items-center gap-[10px] w-full">
            {/* Add to Cart Button */}
           <button 
-            className="flex-1 px-3 py-2 flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-b from-[#FF9D1B] to-[#FF6C01] text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110"
+            className="flex-1 px-3 py-1 flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-b from-[#FF9D1B] to-[#FF6C01] text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110"
             onClick={(e) => { e.stopPropagation(); handleCart?.(e); }}
             title="Add to Cart"
           >
@@ -196,7 +238,7 @@ return (
 
           {/* Buy Now Button */}
           <button 
-            className="flex-1 px-3 py-2 rounded-lg bg-gradient-to-r from-[#38BDF8] to-[#1E90FF] text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110" 
+            className="flex-1 px-3 py-1 flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-b from-[#38BDF8] to-[#1E90FF]  text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110" 
             onClick={(e) => { e.stopPropagation(); handleBuyNow?.(); }}
           >
             <span>Buy Now</span>

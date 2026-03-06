@@ -134,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Your NEW Section */}
         <NavItem
           icon={Image} // Ensure this icon is imported at the top of the file
-          label="Package Mangement "
+          label="Package Mangement"
           active={activeTab === 'new-section'}
           onClick={() => setActiveTab('new-section')}
           collapsed={!sidebarOpen}
