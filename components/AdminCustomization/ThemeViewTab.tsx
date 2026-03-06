@@ -220,7 +220,7 @@ export const ThemeViewTab: React.FC<ThemeViewTabProps> = ({
   const selectedTheme = (websiteConfiguration as any).readyTheme || 'gadgets1';
 
   // Get selected product detail theme from config
-  const selectedProductDetailTheme = websiteConfiguration.productDetailTheme || 'default';
+  const selectedProductDetailTheme = websiteConfiguration.productDetailTheme || 'modern';
 
   const handleThemeSelect = (themeId: string) => {
     setWebsiteConfiguration(prev => ({ ...prev, readyTheme: themeId }));
