@@ -72,23 +72,8 @@ export const ImageSearchModal: React.FC<ImageSearchModalProps> = ({
   }, []);
 
   const startCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
-      setIsCameraMode(true);
-      setError(null);
-    } catch (err) {
-      console.error('Camera error:', err);
-      setError('Unable to access camera. Please check permissions or use file upload.');
-    }
+    setError("Camera feature is currently disabled.");
   }, []);
-
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
