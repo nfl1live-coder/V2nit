@@ -1,7 +1,3 @@
-import MobileNav from "./nav/MobileNav";
-import DesktopNav from "./nav/DesktopNav";
-import MobileTabBar from "./topbar/MobileTabBar";
-import AnnouncedBar from "./AnnouncedBar";
 import ProductMain from "./ProductMain";
 import RelatedProduct from "./details/RelatedProduct";
 import RecentProduct from "./details/RecentProduct";
@@ -10,6 +6,8 @@ import Footer from "./Footer";
 import MobileCategories from "./details/Mobilecategories";
 import React, { useState } from "react";
 import { normalizeImageUrl } from "@/utils/imageUrlHelper";
+import StoreHeader from "../../../components/StoreHeader/StoreHeader";
+import MobileBottomNav from "../../../components/store/MobileBottomNav";
 
 export interface ModernProductDetailProps {
     product: {
@@ -224,11 +222,15 @@ export default function ProductDetailsPage({
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
-            <DesktopNav logo={logoUrl} onBack={onBack} cart={cart} onToggleCart={onToggleCart} />
-            <MobileNav logo={logoUrl} onBack={onBack} cart={cart} onToggleCart={onToggleCart} />
-            <div className="bg-white">
-                <AnnouncedBar text={announcementText} onHomeClick={onBack} />
-            </div>
+            <StoreHeader
+                logo={logoUrl}
+                websiteConfig={websiteConfig}
+                user={user}
+                onLoginClick={onLoginClick}
+                onHomeClick={onBack}
+                cart={cart}
+                onCartClick={() => onToggleCart ? onToggleCart(product.id) : undefined}
+            />
 
             {/*Section 1 */}
             <main className="max-w-[1720px] mx-auto px-4 lg:px-8 py-4 lg:py-8">
@@ -285,7 +287,14 @@ export default function ProductDetailsPage({
             </section>
 
             {/* Mobile tab bar */}
-            <MobileTabBar onHomeClick={onBack} />
+            <MobileBottomNav
+                onHomeClick={onBack}
+                onCartClick={() => onToggleCart ? onToggleCart(product.id) : undefined}
+                onAccountClick={onLoginClick}
+                cartCount={cart?.length}
+                websiteConfig={websiteConfig}
+                user={user}
+            />
 
             {/* Footer */}
             <Footer

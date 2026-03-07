@@ -84,6 +84,7 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
             </button>
             <input
               className="flex-1 font-inter bg-transparent outline-none text-[16px] font-normal placeholder-[#6A717F] min-w-0"
+              name="site-search"
               placeholder="Search in Cart and Get"
               value={searchProps.activeSearchValue}
               onChange={e => searchProps.onInputChange(e.target.value)}

@@ -53,7 +53,7 @@ const CategoryStyle1 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   const duplicatedItems = [...processed, ...processed];
 
   return (
-    <div ref={sectionRef} className="relative pt-8 sm:pt-10 pb-2 sm:pb-3 overflow-hidden"
+    <div ref={sectionRef} className="relative pt-2 sm:pt-2 pb-2 sm:pb-3 overflow-hidden"
       onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setTimeout(() => setIsPaused(false), 3000)}>
       <div className="flex items-center justify-between mb-3 sm:mb-4 px-2">
@@ -117,21 +117,21 @@ const CategoryStyle2 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   if (!processed.length) return null;
 
   return (
-    <div ref={sectionRef} className="py-4 sm:py-6 px-2 sm:px-4">
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
+    <div ref={sectionRef} className="py-1 sm:py-1.5 px-0 sm:px-0">
+      <div className="flex items-center justify-between mb-2 sm:mb-3">
         {/* Category text */}
         <button className="flex items-center gap-1 text-sm font-semibold text-theme-primary hover:text-theme-secondary transition-colors px-3 py-1.5 rounded-lg hover:bg-theme-primary/10" onClick={() => onCategoryClick('__all__')}>
           See All <ChevronRight size={18} />
         </button>
       </div>
       
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4">
+      <div className="grid grid-cols-6 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
         {processed.map((category, index) => {
           const iconSrc = category.image || category.icon;
           const hasImage = iconSrc && isImageUrl(iconSrc);
           return (
             <button key={`${category.name}-${index}`} onClick={() => onCategoryClick(category.slug || category.name)}
-              className="group flex flex-col items-center p-3 sm:p-4 rounded-2xl bg-white border border-gray-100 hover:border-theme-primary/30 hover:shadow-xl hover:shadow-theme-primary/10 transition-all duration-300 hover:-translate-y-1 active:scale-95">
+              className="group flex flex-col items-center p-1.5 sm:p-1 rounded-2xl bg-white border border-gray-100 transition-all duration-300 border border-gray-200">
               <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-theme-primary/10 group-hover:to-theme-secondary/10 flex items-center justify-center overflow-hidden mb-2 sm:mb-3 transition-all duration-300 shadow-inner">
                 {hasImage ? <img src={normalizeImageUrl(iconSrc)} alt={category.name} className="w-full h-full object-cover rounded-xl" loading="lazy" />
                   : <ShoppingBag size={24} className="text-gray-400 group-hover:text-theme-primary transition-colors" />}

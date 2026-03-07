@@ -1,10 +1,19 @@
+
 interface AnnouncedBarProps {
     text?: string;
     onHomeClick?: () => void;
+    onCategoryClick?: () => void;
 }
 
-export default function AnnouncedBar({ text, onHomeClick }: AnnouncedBarProps) {
+export default function AnnouncedBar({ text, onHomeClick, onCategoryClick }: AnnouncedBarProps) {
+
     const displayText = text || "";
+    const onCatergoryClickHandler = onCategoryClick || (() => {
+        window.location.href = "/all-products";
+    });
+    const onHomeClickHandler = onHomeClick || (() => {
+        window.location.href = "/";
+    });
     
     return (
         <div className="max-w-[1720px] mx-auto w-full">
@@ -21,12 +30,12 @@ export default function AnnouncedBar({ text, onHomeClick }: AnnouncedBarProps) {
                 <div className="hidden lg:flex w-full">
                     <div className="flex items-center gap-5 px-8 py-3.5 bg-white border-b border-gray-100 text-sm basis-[40%]">
 
-                        <button onClick={onHomeClick} className="flex items-center gap-1 font-poppins font-medium cursor-pointer text-gray-900">
+                        <button onClick={onHomeClickHandler} className="flex items-center gap-1 font-poppins font-medium cursor-pointer text-gray-900">
                             <img src="https://details-snit.vercel.app/images/home-09.svg" alt="Home" width={24} height={24} />
                             Home
                         </button>
 
-                        <button className="flex items-center gap-1 font-poppins font-medium cursor-pointer text-gray-900">
+                        <button onClick={onCatergoryClickHandler} className="flex items-center gap-1 font-poppins font-medium cursor-pointer text-gray-900">
                             <img src="https://details-snit.vercel.app/images/category-management.svg" alt="Categories" width={24} height={24} />
                             Categories
                         </button>

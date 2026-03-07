@@ -199,14 +199,14 @@ return (
         </div>
         {/* প্রোডাক্ট নাম */}
         <h3 
-          className="text-[14px] font-medium text-center mb-[5px] text-black leading-normal h-[39px] line-clamp-2 overflow-hidden text-ellipsis" 
+        className="text-[14px] font-medium text-left mb-[5px] text-black leading-normal h-[39px] line-clamp-2 overflow-hidden text-ellipsis" 
           onClick={() => onClick?.(product)}
         >
           {String(product?.name || 'Unknown Product')}
         </h3>
 
         {/* প্রাইজ সেকশন */}
-        <div className="mt-auto space-y-3 items-center justify-center flex flex-col">
+        <div className="mt-auto space-y-3 items-left justify-center flex flex-col">
           <div className="flex flex-wrap items-baseline gap-2">
           <span className="text-[#2F3485] font-bold text-[16px] text-center font-roboto ">
             ৳{Number(price).toLocaleString()}

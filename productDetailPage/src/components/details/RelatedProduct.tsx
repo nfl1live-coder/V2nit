@@ -59,7 +59,7 @@ export default function RelatedProduct({ products = [], onProductClick, currency
     return (
         <div>
             <div className="flex justify-between items-center mb-4 lg:mb-6">
-                <h2 className="text-xl lg:text-2xl font-lato font-bold">Related Product</h2>
+                <h2 className="text-xl lg:text-2xl font-lato font-bold text-gray-900">Related Product</h2>
                 <a href="#" className="flex gap-0.5 text-[14px] lg:text-[16px] items-center text-black font-lato font-medium">
                     View More
                     <ChevronRight width={12} height={16} color="#1E90FF" />

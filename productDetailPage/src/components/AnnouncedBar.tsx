@@ -1,11 +1,19 @@
+
+
 interface AnnouncedBarProps {
     text?: string;
-    onHomeClick?: () => void;
+    onHomeClick: () => void;
+    onCategoryClick?: () => void;
 }
-
 export default function AnnouncedBar({ text, onHomeClick }: AnnouncedBarProps) {
-    const displayText = text || "";
-    
+    const displayText = text || "Categories";
+
+    const handleCategoryClick = () => {
+        console.log("Redirecting to all products...");
+
+        // This triggers a full browser page reload to the new URL
+        window.location.href = "/all-products";
+    };
     return (
         <div className="max-w-[1720px] mx-auto w-full">
             <div className="flex items-center w-full">
@@ -26,7 +34,7 @@ export default function AnnouncedBar({ text, onHomeClick }: AnnouncedBarProps) {
                             Home
                         </button>
 
-                        <button className="flex items-center gap-1 font-poppins font-medium cursor-pointer text-gray-900">
+                        <button onClick={handleCategoryClick} className="flex items-center gap-1 font-poppins font-medium cursor-pointer text-gray-900">
                             <img src="https://details-snit.vercel.app/images/category-management.svg" alt="Categories" width={24} height={24} />
                             Categories
                         </button>

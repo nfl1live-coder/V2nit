@@ -308,7 +308,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
       case 'categories':
         if (categories.length === 0) return null;
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 pt-0">
+          <section key={key} className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 pt-0">
             <CategoriesSection
               style={settings?.style || websiteConfig?.categorySectionStyle || 'style6'}
               categories={categories}

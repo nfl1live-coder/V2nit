@@ -376,6 +376,7 @@ export interface Campaign {
 }
 
 export interface WebsiteConfig {
+  productSectionStyle: string;
   storeName: string;
   tenantId?: string;
   websiteName: string;

@@ -91,7 +91,7 @@ const UpcomingCampaigns: React.FC<{ campaigns?: Campaign[] }> = ({ campaigns }) 
     if (!list.length) return null;
     return (
         <div className="hidden lg:flex flex-col w-64 flex-shrink-0">
-            <div className="bg-gray-50 rounded-xl p-4 h-full">
+            <div className="bg-gray-50 rounded-xl p-4 h-full max-h-[400px] overflow-y-auto">
                 <h3 className="text-lg font-bold text-gray-800 mb-3">Upcoming Campaigns</h3>
                 <div className="space-y-3">{list.map(c => <CampaignCard key={c.id} campaign={c} />)}</div>
             </div>
@@ -164,8 +164,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ carouselItems, website
                 )}
             </Helmet>
             <section className="hero-section w-full">
-                <div className="flex gap-4 max-w-full" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
-                    <div className="flex-1 min-w-0">
+                <div className="flex gap-4 max-w-[1720px] mx-auto pb-1 px-2 md:px-4 lg:px-0" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
+                    <div className="flex-1 min-w-0 h-fit">
                     <div className={`hero-carousel group ${isMobile ? 'hero-carousel-mobile' : 'hero-carousel-desktop'}`}>
                         {items.map((item, i) => {
                             const isActive = i === currentIndex;
@@ -194,7 +194,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ carouselItems, website
                                             alt={item.name || 'Banner'}
                                             className="hero-slide-image"
                                             width={isMobile ? 400 : 1920}
-                                            height={isMobile ? 150 : 600}
+                                            height={isMobile ? 150 : 400}  // Adjust height for better aspect ratio on mobile
                                             
                                             priority={i === 0}
                                             eager={isNearActive && i !== 0}
