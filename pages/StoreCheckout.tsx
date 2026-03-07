@@ -118,6 +118,7 @@
 //   const [districtSearch, setDistrictSearch] = useState('');
 //   const [isDistrictOpen, setIsDistrictOpen] = useState(false);
 //   const districtRef = React.useRef<HTMLDivElement>(null);
+  const districtDropdownRef = React.useRef<HTMLDivElement>(null);
 //   const [divisionSearch, setDivisionSearch] = useState('');
 //   const [isOpen, setIsDivisionOpen] = useState(false);
 //   const [selectedDeliveryType, setSelectedDeliveryType] = useState<'Regular' | 'Express' | 'Free'>('Regular');
@@ -149,7 +150,7 @@
 //   useEffect(() => {
 //     if (!isDistrictOpen) return;
 //     const handleClickOutside = (event: MouseEvent) => {
-//       if (districtRef.current && !districtRef.current.contains(event.target as Node)) {
+//       if (districtDropdownRef.current && !districtDropdownRef.current.contains(event.target as Node)) {
 //         setIsDistrictOpen(false);
 //       }
 //     };
@@ -1472,6 +1473,7 @@ const StoreCheckout = ({
   const [districtSearch, setDistrictSearch] = useState('');
   const [isDistrictOpen, setIsDistrictOpen] = useState(false);
   const districtRef = React.useRef<HTMLDivElement>(null);
+  const districtDropdownRef = React.useRef<HTMLDivElement>(null);
   const [divisionSearch, setDivisionSearch] = useState('');
   const [isOpen, setIsDivisionOpen] = useState(false);
   const [selectedDeliveryType, setSelectedDeliveryType] = useState<'Regular' | 'Express' | 'Free'>('Regular');
@@ -1499,7 +1501,7 @@ const StoreCheckout = ({
   useEffect(() => {
     if (!isDistrictOpen) return;
     const handleClickOutside = (event: MouseEvent) => {
-      if (districtRef.current && !districtRef.current.contains(event.target as Node)) {
+      if (districtDropdownRef.current && !districtDropdownRef.current.contains(event.target as Node)) {
         setIsDistrictOpen(false);
       }
     };
@@ -1952,7 +1954,7 @@ const StoreCheckout = ({
                           <ChevronDown size={18} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                         </button>
                         {isOpen && (
-                          <div className="absolute z-30 mt-2 w-full bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                          <div className="absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                              <div className="p-3 border-b border-slate-50">
                                 <input 
                                     className="w-full px-4 py-2 bg-slate-50 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-100" 
@@ -1994,7 +1996,7 @@ const StoreCheckout = ({
                           <ChevronDown size={18} className="text-slate-400" />
                         </button>
                         {isDistrictOpen && formData.division && (
-                          <div className="absolute z-30 mt-2 w-full bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+                          <div ref={districtDropdownRef} className="absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
                              <div className="p-3 border-b border-slate-50">
                                 <input 
                                     className="w-full px-4 py-2 bg-slate-50 rounded-xl text-sm outline-none" 
