@@ -38,10 +38,6 @@ const MobileHeaderStyle1: React.FC<MobileHeaderBarProps> = ({
       </div>
       <div className="flex items-center gap-0.5">
         <button type="button" className="relative w-10 h-10 flex items-center justify-center rounded-xl text-gray-600 hover:bg-gray-50/80 active:scale-95 transition-all duration-200" onClick={onSearchOpen} aria-label="Search"><Search size={20} strokeWidth={1.8} /></button>
-        <button type="button" className="relative w-10 h-10 flex items-center justify-center rounded-xl text-gray-600 hover:bg-gray-50/80 active:scale-95 transition-all duration-200" onClick={onWishlistOpen} aria-label="Wishlist">
-          <Heart size={20} strokeWidth={1.8} />
-          {wishlistBadgeCount > 0 && <span className="absolute top-1 right-1 bg-theme-primary text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">{wishlistBadgeCount > 9 ? '9+' : wishlistBadgeCount}</span>}
-        </button>
         <button type="button" className="relative w-10 h-10 flex items-center justify-center rounded-xl text-gray-600 hover:bg-gray-50/80 active:scale-95 transition-all duration-200" onClick={onCartOpen} aria-label="Cart">
           <ShoppingCart size={20} strokeWidth={1.8} />
           {cartBadgeCount > 0 && <span className="absolute top-1 right-1 bg-theme-primary text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">{cartBadgeCount > 9 ? '9+' : cartBadgeCount}</span>}
