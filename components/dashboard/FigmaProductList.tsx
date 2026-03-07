@@ -460,11 +460,19 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
   // Export products to CSV
   const handleExportCSV = useCallback(() => {
-    if (propProducts.length === 0) {
+    // If there are selected products, export only those. Otherwise export all products.
+    const selectedProductIds = getSelectedProductIds();
+    const selectedProductIdsSet = new Set(selectedProductIds);
+    const productsToExport = selectedProductIds.length > 0
+      ? propProducts.filter(p => selectedProductIdsSet.has(p.id))
+      : propProducts;
+
+    if (productsToExport.length === 0) {
       toast.error('No products to export');
       return;
     }
-    const dataToExport = propProducts.map(p => ({
+
+    const dataToExport = productsToExport.map(p => ({
       id: p.id,
       name: p.name,
       price: p.price,
@@ -488,8 +496,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success(`Exported ${propProducts.length} products`);
-  }, [propProducts]);
+    toast.success(`Exported ${productsToExport.length} products`);
+  }, [propProducts, getSelectedProductIds]);
 
   // Generate unique ID using timestamp + random number
   const generateUniqueId = useCallback((): number => {
@@ -1420,7 +1428,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
                       </button>
                     </div>
                   </div>
-                )}&rbrace;
+                )}
               </div>
               {/* Image */}
               <div className="w-full aspect-square rounded-lg overflow-hidden bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] mb-3">

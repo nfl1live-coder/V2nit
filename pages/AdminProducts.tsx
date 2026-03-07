@@ -140,8 +140,15 @@ const AdminProducts: React.FC<AdminProductsProps> = ({
 
   // --- 2. Export Logic ---
   const handleExportCSV = () => {
-    if (products.length === 0) return alert("No products to export");
-    const dataToExport = products.map(p => ({
+    const selectedProductIds = getSelectedProductIds();
+    const selectedProductIdsSet = new Set(selectedProductIds);
+    const productsToExport = selectedProductIds.length > 0
+      ? products.filter(p => selectedProductIdsSet.has(p.id))
+      : products;
+
+    if (productsToExport.length === 0) return alert("No products to export");
+
+    const dataToExport = productsToExport.map(p => ({
       ...p,
       tags: Array.isArray(p.tags) ? p.tags.join(', ') : '',
       galleryImages: Array.isArray(p.galleryImages) ? p.galleryImages.join(';') : ''
@@ -155,6 +162,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    alert(`Successfully exported ${productsToExport.length} products.`);
   };
 
   // --- 3. Download Template Logic ---
