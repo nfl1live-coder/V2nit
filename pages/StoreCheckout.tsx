@@ -14,6 +14,7 @@ import {
   ArrowLeft,
   Banknote,
   CheckCircle2,
+  Loader2,
   ChevronDown,
   CreditCard,
   Gift,
@@ -143,6 +144,7 @@ const StoreCheckout = ({
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [alertState, setAlertState] = useState<{ type: 'error' | 'success' | null; message: string }>({ type: null, message: '' });
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
   const [draftOrderId, setDraftOrderId] = useState<string | null>(() => sessionStorage.getItem(`draft_order_${product.id}`));
 
@@ -411,7 +413,8 @@ const StoreCheckout = ({
     return () => clearTimeout(timeoutId);
   }, [formData, selectedDeliveryType, selectedPaymentMethod, grandTotal, tenantId, product, quantity, variant, draftOrderId, paymentMethods]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
     if (!validateForm()) {
       setShowConfirmationModal(false);
       return;
@@ -482,12 +485,13 @@ const StoreCheckout = ({
         />
       </Suspense>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 pb-24 md:pb-6">
+      <main className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 pb-24 md:pb-6">
         <section className="glass-card rounded-2xl p-4 md:p-6 to p-16 z-10 animate-slide-up">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-gray-400">Checkout</p>
-              <h1 className="text-2xl font-bold text-gray-900">Complete your purchase</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">🛒 Complete your purchase</h1>
+              <p className="text-sm text-gray-600">Almost there! Just a few more steps to get your order.</p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -510,20 +514,20 @@ const StoreCheckout = ({
                 <div key={step.key} className="flex-1 flex items-center gap-2 md:gap-3">
                   <div
                     className={`mobile-progress-step h-10 w-10 rounded-full flex items-center justify-center border-2 text-sm font-bold transition-all ${isCompleted
-                        ? 'completed border-emerald-500 text-white'
+                      ? 'bg-[linear-gradient(0deg,#38BDF8_0%,#1E90FF_100%)] hover:shadow-lg text-white border-transparent'
                         : active
-                          ? 'active border-emerald-500 text-emerald-600'
-                          : 'border-gray-200 text-gray-400'
+                        ? 'bg-[linear-gradient(0deg,#38BDF8_0%,#1E90FF_100%)] hover:shadow-lg text-white border-transparent'
+                        : 'border-gray-200 text-text-white border-transparent'
                       }`}
                   >
                     {isCompleted ? '✓' : index + 1}
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-gray-400 uppercase tracking-wide">Step {index + 1}</p>
-                    <p className={`text-sm font-semibold transition ${active ? 'text-gray-900' : 'text-gray-400'}`}>{step.label}</p>
+                    <p className={`text-sm font-semibold transition ${active ? 'text-white' : 'text-white'}`}>{step.label}</p>
                   </div>
                   {index < progressSteps.length - 1 && (
-                    <div className={`hidden md:block flex-1 h-1 rounded-full transition ${isCompleted ? 'bg-emerald-500' : active ? 'bg-emerald-200' : 'bg-gray-200'}`} />
+                    <div className={`hidden md:block flex-1 h-1 rounded-full transition ${isCompleted ? '#1E90FF' : active ? '#1E90FF' : '#1E90FF'}`} />
                   )}
                 </div>
               );
@@ -547,7 +551,7 @@ const StoreCheckout = ({
                 {deliveryConfigs && deliveryConfigs.length > 0 && (
                   <div className="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl animate-slide-up">
                     <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-lg md:text-xl font-bold text-gray-800">Delivery Options</h2>
+                      <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-2">🚚 Delivery Options</h2>
                       <span className="text-xs text-gray-500">Choose the best speed for you</span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
@@ -585,21 +589,22 @@ const StoreCheckout = ({
                   <div className="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 font-semibold">Step 1</p>
-                      <h2 className="text-xl font-bold text-gray-900">Delivery Address</h2>
+                      <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">📍 Delivery Address</h2>
+                      <p className="text-sm text-gray-600">Where should we deliver your order?</p>
                     </div>
                     <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Auto-fill</span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2.5">Full Name <span className="text-rose-500">*</span></label>
+                      <label className="block text-sm font-bold text-gray-700 mb-2.5">Your Full Name <span className="text-rose-500">*</span></label>
                       <div className="relative group">
                         <UserIcon className={`absolute left-3 md:left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${formErrors.fullName && touchedFields.fullName ? 'text-rose-400' : 'text-gray-400 group-focus-within:text-emerald-500'}`} size={18} />
                         <input
                           type="text"
                           placeholder="John Doe"
                           autoComplete="name"
-                          className={`mobile-form-input w-full ${formErrors.fullName && touchedFields.fullName ? 'error' : ''
+                          className={`pl-12 pr-4 py-4 border-2 rounded-2xl transition-all duration-300 focus:outline-none text-gray-800 placeholder:text-gray-400 text-base font-medium w-full ${formErrors.fullName && touchedFields.fullName ? 'error' : ''
                             }`}
                           value={formData.fullName}
                           onChange={e => updateField('fullName', e.target.value)}
@@ -639,7 +644,7 @@ const StoreCheckout = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
                     {websiteConfig?.showEmailFieldForOrder && (
                     <div>
                       <label className="block text-sm font-bold text-gray-700 mb-2.5">Email Address <span className="text-rose-500">*</span></label>
@@ -840,9 +845,10 @@ const StoreCheckout = ({
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs uppercase tracking-[0.3em] text-gray-500 font-semibold">Step 2</p>
-                        <h2 className="text-lg md:text-xl font-bold text-gray-900">Select a Payment Option</h2>
+                        <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-2">💳 Select a Payment Option</h2>
+                        <p className="text-sm text-gray-600">Choose your preferred payment method</p>
                       </div>
-                      <span className="mobile-badge mobile-badge-success flex items-center gap-1.5">
+                      <span className="px-3 py-1 rounded-lg bg-gradient-to-b from-[#FF9D1B] to-[#FF6C01] text-white flex items-center gap-1.5">
                         <ShieldCheck size={14} /> Secure
                       </span>
                     </div>
@@ -870,10 +876,10 @@ const StoreCheckout = ({
                             key={method.id}
                             type="button"
                             onClick={() => setSelectedPaymentMethod(method.id)}
-                            className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center justify-center gap-2 min-h-[80px] ${
+                            className={`p-5 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center justify-center gap-3 min-h-[100px] shadow-sm hover:shadow-lg transform hover:scale-[1.02] ${
                               isSelected 
-                                ? 'border-amber-500 bg-amber-50' 
-                                : 'border-gray-200 bg-white hover:border-amber-200'
+                              ? 'border-amber-500 bg-gradient-to-br from-amber-50 to-orange-50 shadow-md ring-2 ring-amber-200'
+                              : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-amber-50/50'
                             }`}
                           >
                             {isSelected && (
@@ -1154,13 +1160,13 @@ const StoreCheckout = ({
               <div className="mt-6 flex flex-col gap-3">
                 <button
                   onClick={handleSubmit}
-                  className="mobile-place-order-btn w-full mobile-touch-feedback"
+                  className="flex-1 font-lato text-white py-3 rounded-[8px] font-bold flex items-center justify-center gap-2 transition-shadow duration-150 bg-[linear-gradient(0deg,#38BDF8_0%,#1E90FF_100%)] hover:shadow-lg"
                 >
                   Confirm Order • {cs}{grandTotal.toLocaleString()}
                 </button>
                 <button
                   onClick={onBack}
-                  className="glass-button w-full rounded-xl border-2 border-theme-primary/30 text-theme-primary font-semibold py-3.5 text-sm flex items-center justify-center gap-2 mobile-touch-feedback"
+                  className="w-full bg-white border-2 border-gray-300 text-gray-700 font-semibold py-3.5 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 text-sm flex items-center justify-center gap-2 mobile-touch-feedback"
                 >
                   <ArrowLeft size={16} /> Continue Shopping
                 </button>

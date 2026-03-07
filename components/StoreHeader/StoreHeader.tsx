@@ -395,6 +395,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {
 
   const searchBarProps = useMemo<HeaderSearchProps>(
     () => ({
+      inputProps: {},
       containerRef: searchContainerRef,
       activeSearchValue,
       onInputChange: handleSearchInput,
